@@ -55,19 +55,14 @@ export function ProjectIntroCard({ fetchedAt }: ProjectIntroCardProps) {
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_18%_0%,rgba(31,95,168,0.10),transparent_28rem),radial-gradient(circle_at_86%_12%,rgba(61,149,86,0.13),transparent_24rem)]" />
       <div className="relative flex flex-col gap-5 lg:flex-row lg:items-start lg:justify-between">
         <div className="max-w-3xl space-y-3">
-          <div className="inline-flex items-center gap-2 rounded-full border border-primary/25 bg-primary/10 px-3 py-1 text-xs font-medium text-primary">
-            <BadgeInfo className="h-3.5 w-3.5" />
-            项目说明
-          </div>
-
           <div className="space-y-2">
             <h2 className="text-2xl font-bold tracking-tight text-brand-navy">
-              为什么要做这个项目？
+              这是干嘛的？
             </h2>
             <p className="text-sm leading-6 text-slate-600 sm:text-base">
-              因为 GPT、Claude 在不同 Apple 区域的订阅价格并不一样，而 Visa 和
-              Mastercard 信用卡的汇率也会有差异，所以这里集中展示不同渠道的订阅方式，
-              并统一换算到人民币价格，方便大家快速比较再决定怎么买更划算。
+              GPT、Claude 在不同 Apple 区域的订阅价格并不一样，Visa 和
+              Mastercard 信用卡的汇率也会有差异。在这里我们展示了不同渠道的订阅方式，
+              并统一换算到人民币价格，方便大家快速比较怎么买更划算。
             </p>
           </div>
 

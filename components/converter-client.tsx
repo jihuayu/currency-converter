@@ -5,7 +5,7 @@ import { FilterBar } from '@/components/filter-bar';
 import { PriceTable } from '@/components/price-table';
 import { Header } from '@/components/header';
 import { ProjectIntroCard } from '@/components/project-intro-card';
-import { MobileSubscriptionSwitcher } from '@/components/mobile-subscription-switcher';
+import { MobileControlsDrawer } from '@/components/mobile-controls-drawer';
 import {
   buildFilterSearch,
   getDefaultFilterState,
@@ -49,6 +49,7 @@ export function ConverterClient({ exchangeRates }: ConverterClientProps) {
       <main className="container relative z-10 mx-auto max-w-7xl px-4 py-8">
         <ProjectIntroCard fetchedAt={exchangeRates.fetchedAt} />
         <FilterBar
+          className="hidden md:block"
           selectedCurrencies={filters.currencies}
           selectedChannels={filters.channels}
           selectedPackages={filters.packages}
@@ -56,8 +57,13 @@ export function ConverterClient({ exchangeRates }: ConverterClientProps) {
             updateFilters({ currencies, channels, packages })
           }
         />
-        <MobileSubscriptionSwitcher
+        <MobileControlsDrawer
+          selectedCurrencies={filters.currencies}
+          selectedChannels={filters.channels}
           selectedPackages={filters.packages}
+          onFilterChange={(currencies, channels, packages) =>
+            updateFilters({ currencies, channels, packages })
+          }
           onPackageChange={(nextPackages) =>
             updateFilters({ ...filters, packages: nextPackages })
           }

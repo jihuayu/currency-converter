@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useId, useMemo, useState } from "react";
 import { cn } from "@/lib/utils";
 import {
   currencies,
@@ -18,6 +18,9 @@ interface FilterBarProps {
   selectedCurrencies: CurrencyCode[];
   selectedChannels: ChannelId[];
   selectedPackages: PackageId[];
+  className?: string;
+  collapsible?: boolean;
+  variant?: "card" | "plain";
   onFilterChange: (
     currencies: CurrencyCode[],
     channels: ChannelId[],
@@ -29,9 +32,14 @@ export function FilterBar({
   selectedCurrencies,
   selectedChannels,
   selectedPackages,
+  className,
+  collapsible = true,
+  variant = "card",
   onFilterChange,
 }: FilterBarProps) {
-  const [isExpanded, setIsExpanded] = useState(false);
+  const panelId = useId();
+  const [isExpanded, setIsExpanded] = useState(!collapsible);
+  const showPanel = !collapsible || isExpanded;
   const hasDefaultPackages = isDefaultPackageSelection(selectedPackages);
 
   const toggleCurrency = (code: CurrencyCode) => {
@@ -83,27 +91,40 @@ export function FilterBar({
   }, [hasFilters, selectedCurrencies.length, selectedChannels.length, selectedPackages.length]);
 
   return (
-    <div className="mb-6 rounded-2xl border border-border/90 bg-card/90 p-6 shadow-lg shadow-brand-navy/5 backdrop-blur-sm">
+    <div
+      className={cn(
+        variant === "card"
+          ? "mb-6 rounded-2xl border border-border/90 bg-card/90 p-6 shadow-lg shadow-brand-navy/5 backdrop-blur-sm"
+          : "mb-0 rounded-none border-0 bg-transparent p-0 shadow-none",
+        className
+      )}
+    >
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <button
           type="button"
-          onClick={() => setIsExpanded((prev) => !prev)}
-          className="flex items-center justify-between gap-3 text-left text-brand-navy transition-colors hover:text-brand-blue"
-          aria-expanded={isExpanded}
-          aria-controls="filter-panel"
+          onClick={() => collapsible && setIsExpanded((prev) => !prev)}
+          className={cn(
+            "flex items-center justify-between gap-3 text-left text-brand-navy",
+            collapsible && "transition-colors hover:text-brand-blue"
+          )}
+          aria-expanded={showPanel}
+          aria-controls={panelId}
+          disabled={!collapsible}
         >
           <span className="flex items-center gap-2">
             <Filter className="h-4 w-4 text-brand-blue" />
             <span className="font-medium">筛选条件</span>
           </span>
-          <span className="flex items-center gap-2 text-sm text-muted-foreground">
-            <span>{isExpanded ? "收起" : "展开"}</span>
-            {isExpanded ? (
-              <ChevronUp className="w-4 h-4" />
-            ) : (
-              <ChevronDown className="w-4 h-4" />
-            )}
-          </span>
+          {collapsible && (
+            <span className="flex items-center gap-2 text-sm text-muted-foreground">
+              <span>{isExpanded ? "收起" : "展开"}</span>
+              {isExpanded ? (
+                <ChevronUp className="w-4 h-4" />
+              ) : (
+                <ChevronDown className="w-4 h-4" />
+              )}
+            </span>
+          )}
         </button>
 
         <div className="flex items-center gap-3 sm:justify-end">
@@ -123,8 +144,8 @@ export function FilterBar({
         </div>
       </div>
 
-      {isExpanded && (
-        <div id="filter-panel" className="space-y-4 pt-4">
+      {showPanel && (
+        <div id={panelId} className="space-y-4 pt-4">
           {/* 货币筛选 */}
           <div>
             <label className="text-sm text-muted-foreground mb-2 block">
