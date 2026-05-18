@@ -46,13 +46,6 @@ export const packages = [
     pricingNote: '土区/尼区使用当地 Apple App Store 标价',
   },
   {
-    id: 'custom-100',
-    name: '100 单位',
-    prices: { USD: 100, TRY: 100, NGN: 100 },
-    description: '按所选币种的 100 单位计算',
-    pricingNote: '自定义测试金额',
-  },
-  {
     id: 'chatgpt-pro-5x',
     name: 'ChatGPT Pro 5x',
     prices: { USD: 100, TRY: 5299.99, NGN: 144900 },

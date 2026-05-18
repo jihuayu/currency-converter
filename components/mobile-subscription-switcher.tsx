@@ -3,8 +3,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { Check, ChevronDown, Layers3 } from 'lucide-react';
 import {
-  defaultPackageIds,
-  isDefaultPackageSelection,
   packages,
   type PackageId,
 } from '@/lib/data';
@@ -31,10 +29,6 @@ export function MobileSubscriptionSwitcher({
       return (
         packages.find((pkg) => pkg.id === selectedPackages[0])?.name ?? '选择订阅'
       );
-    }
-
-    if (isDefaultPackageSelection(selectedPackages)) {
-      return '默认订阅';
     }
 
     if (selectedPackages.length === packages.length) {
@@ -79,25 +73,6 @@ export function MobileSubscriptionSwitcher({
 
   const optionItems = (
     <div className={cn(variant === 'inline' ? 'space-y-2' : undefined)}>
-      <button
-        type="button"
-        onClick={() => selectPackages(defaultPackageIds)}
-        className={cn(
-          'flex w-full items-center justify-between rounded-xl px-3 py-3 text-left text-sm transition-colors',
-          isDefaultPackageSelection(selectedPackages)
-            ? 'bg-primary/15 text-primary'
-            : 'text-foreground hover:bg-secondary/70'
-        )}
-      >
-        <span>
-          <span className="block font-medium">默认订阅</span>
-          <span className="text-xs text-muted-foreground">隐藏 100 单位测试金额</span>
-        </span>
-        {isDefaultPackageSelection(selectedPackages) && (
-          <Check className="h-4 w-4" />
-        )}
-      </button>
-
       <button
         type="button"
         onClick={() => selectPackages(packages.map((pkg) => pkg.id))}

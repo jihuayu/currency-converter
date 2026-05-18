@@ -1,7 +1,6 @@
 'use client';
 
 import { useCallback, useEffect, useState } from 'react';
-import { FilterBar } from '@/components/filter-bar';
 import { PriceTable } from '@/components/price-table';
 import { Header } from '@/components/header';
 import { ProjectIntroCard } from '@/components/project-intro-card';
@@ -48,22 +47,8 @@ export function ConverterClient({ exchangeRates }: ConverterClientProps) {
       <Header />
       <main className="container relative z-10 mx-auto max-w-7xl px-4 py-8">
         <ProjectIntroCard fetchedAt={exchangeRates.fetchedAt} />
-        <FilterBar
-          className="hidden md:block"
-          selectedCurrencies={filters.currencies}
-          selectedChannels={filters.channels}
-          selectedPackages={filters.packages}
-          onFilterChange={(currencies, channels, packages) =>
-            updateFilters({ currencies, channels, packages })
-          }
-        />
         <MobileControlsDrawer
-          selectedCurrencies={filters.currencies}
-          selectedChannels={filters.channels}
           selectedPackages={filters.packages}
-          onFilterChange={(currencies, channels, packages) =>
-            updateFilters({ currencies, channels, packages })
-          }
           onPackageChange={(nextPackages) =>
             updateFilters({ ...filters, packages: nextPackages })
           }

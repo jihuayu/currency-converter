@@ -1,52 +1,27 @@
 'use client';
 
 import { useEffect, useMemo, useState } from 'react';
-import { Filter, SlidersHorizontal, X } from 'lucide-react';
-import { FilterBar } from '@/components/filter-bar';
+import { Layers3, X } from 'lucide-react';
 import { MobileSubscriptionSwitcher } from '@/components/mobile-subscription-switcher';
 import {
-  channels,
-  currencies,
-  isDefaultPackageSelection,
   packages,
-  type ChannelId,
-  type CurrencyCode,
   type PackageId,
 } from '@/lib/data';
 
 interface MobileControlsDrawerProps {
-  selectedCurrencies: CurrencyCode[];
-  selectedChannels: ChannelId[];
   selectedPackages: PackageId[];
-  onFilterChange: (
-    currencies: CurrencyCode[],
-    channels: ChannelId[],
-    packages: PackageId[]
-  ) => void;
   onPackageChange: (packages: PackageId[]) => void;
 }
 
 export function MobileControlsDrawer({
-  selectedCurrencies,
-  selectedChannels,
   selectedPackages,
-  onFilterChange,
   onPackageChange,
 }: MobileControlsDrawerProps) {
   const [isOpen, setIsOpen] = useState(false);
 
-  const hasFilters =
-    selectedCurrencies.length < currencies.length ||
-    selectedChannels.length < channels.length ||
-    !isDefaultPackageSelection(selectedPackages);
-
   const packageLabel = useMemo(() => {
     if (selectedPackages.length === 1) {
       return packages.find((pkg) => pkg.id === selectedPackages[0])?.name ?? '选择订阅';
-    }
-
-    if (isDefaultPackageSelection(selectedPackages)) {
-      return '默认订阅';
     }
 
     if (selectedPackages.length === packages.length) {
@@ -55,10 +30,6 @@ export function MobileControlsDrawer({
 
     return `${selectedPackages.length} 个订阅`;
   }, [selectedPackages]);
-
-  const filterLabel = hasFilters
-    ? `${selectedCurrencies.length}/${currencies.length} 货币 · ${selectedChannels.length}/${channels.length} 渠道`
-    : '未筛选';
 
   useEffect(() => {
     if (!isOpen) {
@@ -94,20 +65,16 @@ export function MobileControlsDrawer({
         >
           <span className="flex min-w-0 items-center gap-3">
             <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary/15 text-primary">
-              <SlidersHorizontal className="h-5 w-5" />
+              <Layers3 className="h-5 w-5" />
             </span>
             <span className="min-w-0">
-              <span className="block text-xs text-muted-foreground">快速切换 / 筛选</span>
+              <span className="block text-xs text-muted-foreground">快速切换订阅</span>
               <span className="block truncate font-medium text-foreground">
                 {packageLabel}
-              </span>
-              <span className="block truncate text-xs text-muted-foreground">
-                {filterLabel}
               </span>
             </span>
           </span>
           <span className="flex shrink-0 items-center gap-1 rounded-full bg-secondary px-3 py-1.5 text-sm font-medium text-brand-navy">
-            <Filter className="h-3.5 w-3.5" />
             打开
           </span>
         </button>
@@ -131,10 +98,10 @@ export function MobileControlsDrawer({
             <div className="flex items-center justify-between gap-3 border-b border-border px-5 py-4">
               <div>
                 <h2 id="mobile-controls-title" className="text-lg font-bold text-brand-navy">
-                  快速切换与筛选
+                  快速切换订阅
                 </h2>
                 <p className="text-sm text-muted-foreground">
-                  将订阅切换、货币和支付渠道统一放在这里
+                  选择要查看的订阅套餐
                 </p>
               </div>
               <button
@@ -152,14 +119,6 @@ export function MobileControlsDrawer({
                 variant="inline"
                 selectedPackages={selectedPackages}
                 onPackageChange={onPackageChange}
-              />
-              <FilterBar
-                variant="plain"
-                collapsible={false}
-                selectedCurrencies={selectedCurrencies}
-                selectedChannels={selectedChannels}
-                selectedPackages={selectedPackages}
-                onFilterChange={onFilterChange}
               />
             </div>
 
