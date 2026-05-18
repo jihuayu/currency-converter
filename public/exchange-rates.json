@@ -1,7 +1,7 @@
 {
   "baseCurrency": "CNY",
   "sampleAmount": 1000,
-  "fetchedAt": "2026-05-18T09:57:17.362Z",
+  "fetchedAt": "2026-05-18T10:04:56.652Z",
   "currencies": {
     "USD": {
       "visa": {
@@ -477,9 +477,9 @@
     ]
   },
   "notes": [
-    "该文件在构建阶段生成，属于静态汇率与 App Store Price 价格快照。",
+    "该文件在构建阶段生成：汇率自动刷新，App Store Price 使用静态价格快照。",
     "Visa 使用 Chromium + 桌面 UA，在官方汇率页面同站上下文内抓取。",
     "Mastercard 使用官方公开汇率接口抓取。",
-    "SKU 价格来自 appstoreprice.org；每个 SKU 保留美区 + 最便宜的 2 个地区。"
+    "SKU 和最低价地区来自 data/app-store-prices.json；需要时手动运行 npm run generate:app-store-prices 更新。"
   ]
 }

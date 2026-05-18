@@ -23,6 +23,13 @@ const APPSTORE_PRICE_APPS = [
 
 const SAMPLE_AMOUNT = 1000;
 const OUTPUT_PATH = path.join(process.cwd(), 'public', 'exchange-rates.json');
+const APPSTORE_PRICE_SNAPSHOT_PATH = path.join(
+  process.cwd(),
+  'data',
+  'app-store-prices.json'
+);
+const REFRESH_APPSTORE_PRICES = process.argv.includes('--refresh-app-store-prices');
+const APPSTORE_PRICES_ONLY = process.argv.includes('--app-store-prices-only');
 const VISA_CALCULATOR_URL =
   'https://www.visa.com.hk/support/consumer/travel-support/exchange-rate-calculator.html';
 const DESKTOP_CHROME_UA =
@@ -336,6 +343,35 @@ async function fetchAppStorePrices() {
   };
 }
 
+async function readAppStorePriceSnapshot() {
+  try {
+    const raw = await fs.readFile(APPSTORE_PRICE_SNAPSHOT_PATH, 'utf8');
+    return JSON.parse(raw);
+  } catch (error) {
+    throw new Error(
+      `未能读取 App Store Price 静态快照 ${APPSTORE_PRICE_SNAPSHOT_PATH}。` +
+        ' 如需更新 SKU 和最低价地区，请手动运行 npm run generate:app-store-prices。',
+      { cause: error }
+    );
+  }
+}
+
+async function loadAppStorePrices() {
+  if (!REFRESH_APPSTORE_PRICES) {
+    return readAppStorePriceSnapshot();
+  }
+
+  const appStorePrices = await fetchAppStorePrices();
+  await fs.mkdir(path.dirname(APPSTORE_PRICE_SNAPSHOT_PATH), { recursive: true });
+  await fs.writeFile(
+    APPSTORE_PRICE_SNAPSHOT_PATH,
+    `${JSON.stringify(appStorePrices, null, 2)}\n`,
+    'utf8'
+  );
+  console.log(`Updated ${APPSTORE_PRICE_SNAPSHOT_PATH}`);
+  return appStorePrices;
+}
+
 function getManualRate(currency, provider) {
   if (currency !== 'CNY') return null;
   return {
@@ -539,9 +575,19 @@ function getCurrencyCodes(appStorePrices) {
 }
 
 async function main() {
-  const appStorePrices = await fetchAppStorePrices();
+  const appStorePrices = await loadAppStorePrices();
+  if (APPSTORE_PRICES_ONLY) {
+    console.log(`App Store Price SKUs: ${appStorePrices.packages.length}`);
+    return;
+  }
+
   const currencyCodes = getCurrencyCodes(appStorePrices);
   console.log(`App Store Price SKUs: ${appStorePrices.packages.length}`);
+  console.log(
+    REFRESH_APPSTORE_PRICES
+      ? 'App Store Price snapshot: refreshed manually'
+      : `App Store Price snapshot: ${APPSTORE_PRICE_SNAPSHOT_PATH}`
+  );
   console.log(`Currencies: ${currencyCodes.join(', ')}`);
 
   const [visa, mastercard] = await Promise.all([
@@ -564,10 +610,10 @@ async function main() {
     ),
     appStorePrices,
     notes: [
-      '该文件在构建阶段生成，属于静态汇率与 App Store Price 价格快照。',
+      '该文件在构建阶段生成：汇率自动刷新，App Store Price 使用静态价格快照。',
       'Visa 使用 Chromium + 桌面 UA，在官方汇率页面同站上下文内抓取。',
       'Mastercard 使用官方公开汇率接口抓取。',
-      'SKU 价格来自 appstoreprice.org；每个 SKU 保留美区 + 最便宜的 2 个地区。',
+      'SKU 和最低价地区来自 data/app-store-prices.json；需要时手动运行 npm run generate:app-store-prices 更新。',
     ],
   };
 

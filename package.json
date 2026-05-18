@@ -4,6 +4,7 @@
   "private": true,
   "scripts": {
     "generate:rates": "node scripts/generate-exchange-rates.mjs",
+    "generate:app-store-prices": "node scripts/generate-exchange-rates.mjs --refresh-app-store-prices --app-store-prices-only",
     "dev": "next dev --turbopack",
     "build": "npm run generate:rates && next build",
     "start": "next start",
