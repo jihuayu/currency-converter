@@ -73,7 +73,7 @@ export function ProjectIntroCard({ fetchedAt }: ProjectIntroCardProps) {
           </div>
         </div>
 
-        <div className="grid gap-3 sm:grid-cols-3 lg:max-w-2xl">
+        <div className="hidden gap-3 lg:grid lg:max-w-2xl lg:grid-cols-3">
           {highlights.map(({ icon: Icon, title, description }) => (
             <div
               key={title}
