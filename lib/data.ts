@@ -25,13 +25,6 @@ export interface SubscriptionPackage {
 
 export const packages = [
   {
-    id: 'custom-100',
-    name: '100 单位',
-    prices: { USD: 100, TRY: 100, NGN: 100 },
-    description: '按所选币种的 100 单位计算',
-    pricingNote: '自定义测试金额',
-  },
-  {
     id: 'chatgpt-plus',
     name: 'ChatGPT Plus',
     prices: { USD: 19.99, TRY: 499.99, NGN: 31500 },
@@ -44,6 +37,20 @@ export const packages = [
     prices: { USD: 200, TRY: 7999.99, NGN: 299900 },
     description: 'OpenAI ChatGPT Pro 20x 订阅',
     pricingNote: '土区/尼区使用当地 Apple App Store 标价',
+  },
+  {
+    id: 'claude-max-20x',
+    name: 'Claude Max 20x',
+    prices: { USD: 249.99, TRY: 9999.99, NGN: 200000 },
+    description: 'Anthropic Claude Max 20x 订阅',
+    pricingNote: '土区/尼区使用当地 Apple App Store 标价',
+  },
+  {
+    id: 'custom-100',
+    name: '100 单位',
+    prices: { USD: 100, TRY: 100, NGN: 100 },
+    description: '按所选币种的 100 单位计算',
+    pricingNote: '自定义测试金额',
   },
   {
     id: 'chatgpt-pro-5x',
@@ -67,22 +74,35 @@ export const packages = [
     pricingNote: '土区/尼区使用当地 Apple App Store 标价',
   },
   {
-    id: 'claude-max-20x',
-    name: 'Claude Max 20x',
-    prices: { USD: 249.99, TRY: 9999.99, NGN: 200000 },
-    description: 'Anthropic Claude Max 20x 订阅',
-    pricingNote: '土区/尼区使用当地 Apple App Store 标价',
+    id: 'twitter-premium',
+    name: 'Twitter Premium',
+    prices: { USD: 8, TRY: 150, NGN: 3650 },
+    description: 'Twitter / X Premium 订阅',
+    pricingNote: '使用 X 官方订阅页面标价',
   },
   {
-    id: 'cursor-pro',
-    name: 'Cursor Pro',
-    prices: { USD: 20 },
-    description: 'Cursor Pro 订阅',
-    pricingNote: '暂未配置土区/尼区 Apple App Store 标价',
+    id: 'twitter-premium-plus',
+    name: 'Twitter Premium+',
+    prices: { USD: 40, TRY: 1450, NGN: 60390 },
+    description: 'Twitter / X Premium+ 订阅',
+    pricingNote: '使用 X 官方订阅页面标价',
   },
 ] as const satisfies readonly SubscriptionPackage[];
 
 export type PackageId = (typeof packages)[number]['id'];
+
+export const defaultPackageIds = packages
+  .filter((pkg) => pkg.id !== 'custom-100')
+  .map((pkg) => pkg.id) as PackageId[];
+
+export function isDefaultPackageSelection(
+  packageIds: readonly PackageId[]
+): boolean {
+  return (
+    packageIds.length === defaultPackageIds.length &&
+    defaultPackageIds.every((id) => packageIds.includes(id))
+  );
+}
 
 export function formatPrice(price: number, currency: string = 'CNY'): string {
   if (currency === 'CNY') {

@@ -1,21 +1,25 @@
 @import "tailwindcss";
 
 @theme inline {
-  --color-background: #09090b;
-  --color-foreground: #fafafa;
-  --color-card: #18181b;
-  --color-card-foreground: #fafafa;
-  --color-primary: #10b981;
-  --color-primary-foreground: #09090b;
-  --color-secondary: #27272a;
-  --color-secondary-foreground: #fafafa;
-  --color-muted: #27272a;
-  --color-muted-foreground: #a1a1aa;
-  --color-accent: #10b981;
-  --color-accent-foreground: #09090b;
-  --color-border: #27272a;
-  --color-ring: #10b981;
-  --radius: 0.5rem;
+  --color-background: #fbf8f1;
+  --color-foreground: #10243a;
+  --color-card: #fffefa;
+  --color-card-foreground: #10243a;
+  --color-primary: #3d9556;
+  --color-primary-foreground: #ffffff;
+  --color-secondary: #eef2f5;
+  --color-secondary-foreground: #10243a;
+  --color-muted: #e8edf2;
+  --color-muted-foreground: #64748b;
+  --color-accent: #1f5fa8;
+  --color-accent-foreground: #ffffff;
+  --color-border: #d6dde6;
+  --color-ring: #2f6dae;
+  --color-brand-navy: #10243a;
+  --color-brand-blue: #1f5fa8;
+  --color-soft-green: #eef7ef;
+  --color-warm-panel: #fffaf2;
+  --radius: 0.75rem;
 
   --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
   --font-mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
@@ -26,7 +30,15 @@
 }
 
 body {
-  background-color: var(--color-background);
+  min-height: 100vh;
+  background:
+    radial-gradient(circle at 12% 8%, rgba(31, 95, 168, 0.11), transparent 28rem),
+    radial-gradient(circle at 82% 18%, rgba(61, 149, 86, 0.12), transparent 30rem),
+    linear-gradient(180deg, #fffdf8 0%, var(--color-background) 42%, #f6f8f4 100%);
   color: var(--color-foreground);
   font-family: var(--font-sans);
+}
+
+::selection {
+  background: rgba(61, 149, 86, 0.22);
 }

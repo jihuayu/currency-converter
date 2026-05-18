@@ -1,15 +1,18 @@
 "use client";
 
+import { useMemo, useState } from "react";
 import { cn } from "@/lib/utils";
 import {
   currencies,
   channels,
+  defaultPackageIds,
+  isDefaultPackageSelection,
   packages,
   type CurrencyCode,
   type ChannelId,
   type PackageId,
 } from "@/lib/data";
-import { Filter, X } from "lucide-react";
+import { ChevronDown, ChevronUp, Filter, X } from "lucide-react";
 
 interface FilterBarProps {
   selectedCurrencies: CurrencyCode[];
@@ -28,6 +31,9 @@ export function FilterBar({
   selectedPackages,
   onFilterChange,
 }: FilterBarProps) {
+  const [isExpanded, setIsExpanded] = useState(false);
+  const hasDefaultPackages = isDefaultPackageSelection(selectedPackages);
+
   const toggleCurrency = (code: CurrencyCode) => {
     const newCurrencies = selectedCurrencies.includes(code)
       ? selectedCurrencies.filter((c) => c !== code)
@@ -59,107 +65,137 @@ export function FilterBar({
     onFilterChange(
       currencies.map((c) => c.code),
       channels.map((c) => c.id),
-      packages.map((p) => p.id)
+      defaultPackageIds
     );
   };
 
   const hasFilters =
     selectedCurrencies.length < currencies.length ||
     selectedChannels.length < channels.length ||
-    selectedPackages.length < packages.length;
+    !hasDefaultPackages;
+
+  const summaryText = useMemo(() => {
+    if (!hasFilters) {
+      return null;
+    }
+
+    return `已筛选 ${selectedCurrencies.length}/${currencies.length} 个货币、${selectedChannels.length}/${channels.length} 个渠道、${selectedPackages.length}/${packages.length} 个套餐`;
+  }, [hasFilters, selectedCurrencies.length, selectedChannels.length, selectedPackages.length]);
 
   return (
-    <div className="bg-card rounded-xl border border-border p-6 mb-6">
-      <div className="flex items-center justify-between mb-4">
-        <div className="flex items-center gap-2 text-foreground">
-          <Filter className="w-4 h-4" />
-          <span className="font-medium">筛选条件</span>
+    <div className="mb-6 rounded-2xl border border-border/90 bg-card/90 p-6 shadow-lg shadow-brand-navy/5 backdrop-blur-sm">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <button
+          type="button"
+          onClick={() => setIsExpanded((prev) => !prev)}
+          className="flex items-center justify-between gap-3 text-left text-brand-navy transition-colors hover:text-brand-blue"
+          aria-expanded={isExpanded}
+          aria-controls="filter-panel"
+        >
+          <span className="flex items-center gap-2">
+            <Filter className="h-4 w-4 text-brand-blue" />
+            <span className="font-medium">筛选条件</span>
+          </span>
+          <span className="flex items-center gap-2 text-sm text-muted-foreground">
+            <span>{isExpanded ? "收起" : "展开"}</span>
+            {isExpanded ? (
+              <ChevronUp className="w-4 h-4" />
+            ) : (
+              <ChevronDown className="w-4 h-4" />
+            )}
+          </span>
+        </button>
+
+        <div className="flex items-center gap-3 sm:justify-end">
+          {summaryText && (
+            <p className="text-sm text-muted-foreground">{summaryText}</p>
+          )}
+          {hasFilters && (
+            <button
+              type="button"
+              onClick={resetFilters}
+              className="flex shrink-0 items-center gap-1 text-sm text-muted-foreground transition-colors hover:text-brand-blue"
+            >
+              <X className="w-3 h-3" />
+              重置
+            </button>
+          )}
         </div>
-        {hasFilters && (
-          <button
-            onClick={resetFilters}
-            className="flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground transition-colors"
-          >
-            <X className="w-3 h-3" />
-            重置
-          </button>
-        )}
       </div>
 
-      <div className="space-y-4">
-        {/* 货币筛选 */}
-        <div>
-          <label className="text-sm text-muted-foreground mb-2 block">
-            货币
-          </label>
-          <div className="flex flex-wrap gap-2">
-            {currencies.map((currency) => (
-              <button
-                key={currency.code}
-                onClick={() => toggleCurrency(currency.code)}
-                className={cn(
-                  "px-3 py-1.5 rounded-lg text-sm font-medium transition-all",
-                  selectedCurrencies.includes(currency.code)
-                    ? "bg-primary text-primary-foreground"
-                    : "bg-secondary text-secondary-foreground hover:bg-secondary/80"
-                )}
-              >
-                <span className="mr-1.5">{currency.flag}</span>
-                {currency.name}
-              </button>
-            ))}
+      {isExpanded && (
+        <div id="filter-panel" className="space-y-4 pt-4">
+          {/* 货币筛选 */}
+          <div>
+            <label className="text-sm text-muted-foreground mb-2 block">
+              货币
+            </label>
+            <div className="flex flex-wrap gap-2">
+              {currencies.map((currency) => (
+                <button
+                  key={currency.code}
+                  onClick={() => toggleCurrency(currency.code)}
+                  className={cn(
+                    "rounded-xl border px-3 py-1.5 text-sm font-medium transition-all",
+                    selectedCurrencies.includes(currency.code)
+                      ? "border-primary bg-primary text-primary-foreground shadow-sm shadow-primary/20"
+                      : "border-border/80 bg-secondary/70 text-secondary-foreground hover:border-brand-blue/30 hover:bg-white"
+                  )}
+                >
+                  <span className="mr-1.5">{currency.flag}</span>
+                  {currency.name}
+                </button>
+              ))}
+            </div>
           </div>
-        </div>
 
-        {/* 渠道筛选 */}
-        <div>
-          <label className="text-sm text-muted-foreground mb-2 block">
-            支付渠道
-          </label>
-          <div className="flex flex-wrap gap-2">
-            {channels.map((channel) => (
-              <button
-                key={channel.id}
-                onClick={() => toggleChannel(channel.id)}
-                className={cn(
-                  "px-3 py-1.5 rounded-lg text-sm font-medium transition-all",
-                  selectedChannels.includes(channel.id)
-                    ? "bg-primary text-primary-foreground"
-                    : "bg-secondary text-secondary-foreground hover:bg-secondary/80"
-                )}
-              >
-                {channel.name}
-                <span className="ml-1.5 text-xs opacity-70">
-                  （接口）
-                </span>
-              </button>
-            ))}
+          {/* 渠道筛选 */}
+          <div>
+            <label className="text-sm text-muted-foreground mb-2 block">
+              支付渠道
+            </label>
+            <div className="flex flex-wrap gap-2">
+              {channels.map((channel) => (
+                <button
+                  key={channel.id}
+                  onClick={() => toggleChannel(channel.id)}
+                  className={cn(
+                    "rounded-xl border px-3 py-1.5 text-sm font-medium transition-all",
+                    selectedChannels.includes(channel.id)
+                      ? "border-brand-blue bg-brand-blue text-white shadow-sm shadow-brand-blue/20"
+                      : "border-border/80 bg-secondary/70 text-secondary-foreground hover:border-brand-blue/30 hover:bg-white"
+                  )}
+                >
+                  {channel.name}
+                </button>
+              ))}
+            </div>
           </div>
-        </div>
 
-        {/* 套餐筛选 */}
-        <div>
-          <label className="text-sm text-muted-foreground mb-2 block">
-            套餐
-          </label>
-          <div className="flex flex-wrap gap-2">
-            {packages.map((pkg) => (
-              <button
-                key={pkg.id}
-                onClick={() => togglePackage(pkg.id)}
-                className={cn(
-                  "px-3 py-1.5 rounded-lg text-sm font-medium transition-all",
-                  selectedPackages.includes(pkg.id)
-                    ? "bg-primary text-primary-foreground"
-                    : "bg-secondary text-secondary-foreground hover:bg-secondary/80"
-                )}
-              >
-                {pkg.name}
-              </button>
-            ))}
+          {/* 套餐筛选 */}
+          <div>
+            <label className="text-sm text-muted-foreground mb-2 block">
+              套餐
+            </label>
+            <div className="flex flex-wrap gap-2">
+              {packages.map((pkg) => (
+                <button
+                  key={pkg.id}
+                  onClick={() => togglePackage(pkg.id)}
+                  className={cn(
+                    "rounded-xl border px-3 py-1.5 text-sm font-medium transition-all",
+                    selectedPackages.includes(pkg.id)
+                      ? "border-primary bg-primary text-primary-foreground shadow-sm shadow-primary/20"
+                      : "border-border/80 bg-secondary/70 text-secondary-foreground hover:border-brand-blue/30 hover:bg-white"
+                  )}
+                >
+                  {pkg.name}
+                </button>
+              ))}
+            </div>
           </div>
         </div>
-      </div>
+      )}
     </div>
   );
 }

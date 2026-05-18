@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo } from 'react';
 import {
   channels,
   currencies,
@@ -17,106 +17,40 @@ import {
   type ProviderRateResult,
 } from '@/lib/exchange-rate-types';
 import { cn } from '@/lib/utils';
-import {
-  AlertCircle,
-  CreditCard,
-  LoaderCircle,
-  TrendingDown,
-  TrendingUp,
-} from 'lucide-react';
+import { CreditCard, Minus, TrendingDown, TrendingUp } from 'lucide-react';
 
 interface PriceTableProps {
+  exchangeRates: ExchangeRatesResponse;
   selectedCurrencies: CurrencyCode[];
   selectedChannels: ChannelId[];
   selectedPackages: PackageId[];
 }
 
-function formatDateTime(value: string | null): string {
-  if (!value) return '未知';
-
-  return new Intl.DateTimeFormat('zh-CN', {
-    year: 'numeric',
-    month: '2-digit',
-    day: '2-digit',
-    hour: '2-digit',
-    minute: '2-digit',
-    timeZoneName: 'short',
-  }).format(new Date(value));
-}
-
 export function PriceTable({
+  exchangeRates,
   selectedCurrencies,
   selectedChannels,
   selectedPackages,
 }: PriceTableProps) {
-  const filteredPackages = packages.filter((item) =>
-    selectedPackages.includes(item.id)
+  const filteredPackages = useMemo(
+    () => packages.filter((item) => selectedPackages.includes(item.id)),
+    [selectedPackages]
   );
-  const filteredCurrencies = currencies.filter((item) =>
-    selectedCurrencies.includes(item.code)
+  const filteredCurrencies = useMemo(
+    () => currencies.filter((item) => selectedCurrencies.includes(item.code)),
+    [selectedCurrencies]
   );
-  const filteredChannels = channels.filter((item) =>
-    selectedChannels.includes(item.id)
+  const filteredChannels = useMemo(
+    () => channels.filter((item) => selectedChannels.includes(item.id)),
+    [selectedChannels]
   );
 
-  const [rates, setRates] = useState<ExchangeRatesResponse | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    const controller = new AbortController();
-
-    async function loadRates() {
-      try {
-        setLoading(true);
-        setError(null);
-
-        const response = await fetch('/exchange-rates.json', {
-          signal: controller.signal,
-          cache: 'no-store',
-        });
-
-        if (!response.ok) {
-          throw new Error(`接口请求失败：${response.status}`);
-        }
-
-        const payload = (await response.json()) as ExchangeRatesResponse;
-        const filteredPayload: ExchangeRatesResponse = {
-          ...payload,
-          currencies: Object.fromEntries(
-            selectedCurrencies.map((currencyCode) => [
-              currencyCode,
-              payload.currencies[currencyCode],
-            ])
-          ) as ExchangeRatesResponse['currencies'],
-        };
-        setRates(filteredPayload);
-      } catch (fetchError) {
-        if (controller.signal.aborted) {
-          return;
-        }
-
-        setError(
-          fetchError instanceof Error ? fetchError.message : '汇率获取失败'
-        );
-      } finally {
-        if (!controller.signal.aborted) {
-          setLoading(false);
-        }
-      }
-    }
-
-    loadRates();
-
-    return () => controller.abort();
-  }, [selectedCurrencies]);
-
-  const rateLookup = useMemo(() => rates?.currencies, [rates]);
+  const rateLookup = exchangeRates.currencies;
 
   const getRateResult = (
     currencyCode: CurrencyCode,
     channelId: ChannelId
-  ): ProviderRateResult | undefined => rateLookup?.[currencyCode]?.[channelId];
+  ): ProviderRateResult | undefined => rateLookup[currencyCode]?.[channelId];
 
   const getCNYPrice = (
     amount: number,
@@ -179,102 +113,7 @@ export function PriceTable({
   };
 
   return (
-    <div className="space-y-6">
-      <div className="bg-card rounded-xl border border-border p-4 space-y-4">
-        <div className="flex flex-wrap items-start justify-between gap-3">
-          <div>
-            <h3 className="text-sm font-medium text-muted-foreground mb-1">
-              实时汇率（兑人民币）
-            </h3>
-            <p className="text-sm text-muted-foreground">
-              页面读取构建时生成的静态汇率快照，适合纯 SSG 部署。
-            </p>
-          </div>
-          {loading && (
-            <div className="inline-flex items-center gap-2 text-sm text-muted-foreground">
-              <LoaderCircle className="w-4 h-4 animate-spin" />
-              加载中...
-            </div>
-          )}
-        </div>
-
-        {error && (
-          <div className="flex items-start gap-2 rounded-lg border border-red-500/30 bg-red-500/10 px-3 py-2 text-sm text-red-300">
-            <AlertCircle className="w-4 h-4 mt-0.5 shrink-0" />
-            <span>{error}</span>
-          </div>
-        )}
-
-        <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
-          {filteredCurrencies.map((currency) => (
-            <div
-              key={currency.code}
-              className="rounded-xl border border-border bg-secondary/20 p-4"
-            >
-              <div className="flex items-center gap-2 mb-3">
-                <span className="text-xl">{currency.flag}</span>
-                <div>
-                  <div className="font-medium text-foreground">{currency.name}</div>
-                  <div className="text-xs text-muted-foreground">
-                    1 {currency.code} ≈ CNY
-                  </div>
-                </div>
-              </div>
-
-              <div className="space-y-2">
-                {filteredChannels.map((channel) => {
-                  const result = getRateResult(currency.code, channel.id);
-                  const success = isSuccessRate(result);
-
-                  return (
-                    <div
-                      key={channel.id}
-                      className="rounded-lg bg-background/70 px-3 py-3"
-                    >
-                      <div className="flex items-center justify-between gap-3">
-                        <div>
-                          <div className="font-medium text-foreground">
-                            {channel.name}
-                          </div>
-                          <div className="text-xs text-muted-foreground">
-                            {success
-                              ? `更新时间：${formatDateTime(result.sourceUpdatedAt)}`
-                              : '当前不可用'}
-                          </div>
-                        </div>
-                        <div className="text-right">
-                          {success ? (
-                            <div className="font-mono font-semibold text-foreground">
-                              ¥{result.rate.toFixed(6)}
-                            </div>
-                          ) : (
-                            <div className="text-sm text-amber-300">不可用</div>
-                          )}
-                        </div>
-                      </div>
-
-                      {!success && result && (
-                        <p className="mt-2 text-xs leading-5 text-amber-200/90">
-                          {result.message}
-                        </p>
-                      )}
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-          ))}
-        </div>
-
-        {rates?.notes?.length ? (
-          <div className="space-y-1 text-xs text-muted-foreground">
-            {rates.notes.map((note) => (
-              <div key={note}>• {note}</div>
-            ))}
-          </div>
-        ) : null}
-      </div>
-
+    <div className="space-y-4">
       <div className="grid gap-4">
         {filteredPackages.map((pkg) => {
           const lowest = getLowestPrice(pkg);
@@ -284,12 +123,12 @@ export function PriceTable({
           return (
             <div
               key={pkg.id}
-              className="bg-card rounded-xl border border-border overflow-hidden"
+              className="overflow-hidden rounded-2xl border border-border/90 bg-card/95 shadow-lg shadow-brand-navy/5"
             >
-              <div className="bg-secondary/30 px-6 py-4 border-b border-border">
+              <div className="border-b border-border/80 bg-gradient-to-r from-brand-blue/10 via-secondary/60 to-primary/10 px-6 py-4">
                 <div className="flex items-center justify-between gap-4">
                   <div>
-                    <h3 className="text-lg font-semibold text-foreground">
+                    <h3 className="text-lg font-bold text-brand-navy">
                       {pkg.name}
                     </h3>
                     <p className="text-sm text-muted-foreground">
@@ -302,7 +141,7 @@ export function PriceTable({
                   {usdAmount !== null && (
                     <div className="text-right">
                       <div className="text-sm text-muted-foreground">美区参考价</div>
-                      <div className="font-mono font-semibold text-foreground">
+                      <div className="font-mono font-semibold text-brand-navy">
                         {formatPrice(usdAmount, 'USD')}
                         <span className="text-muted-foreground font-normal">
                           /月
@@ -321,11 +160,11 @@ export function PriceTable({
                     return (
                       <div
                         key={currency.code}
-                        className="bg-secondary/20 rounded-lg p-4"
+                        className="rounded-2xl border border-border/70 bg-white/75 p-4 shadow-sm shadow-brand-navy/5"
                       >
                         <div className="flex items-center gap-2 mb-3">
                           <span className="text-xl">{currency.flag}</span>
-                          <span className="font-medium text-foreground">
+                          <span className="font-semibold text-brand-navy">
                             {currency.name}
                           </span>
                           <span className="text-sm text-muted-foreground ml-auto font-mono">
@@ -336,7 +175,7 @@ export function PriceTable({
                         </div>
 
                         {listedAmount === null ? (
-                          <div className="rounded-lg bg-background/50 px-3 py-3 text-sm text-muted-foreground">
+                          <div className="rounded-xl border border-border/70 bg-background/60 px-3 py-3 text-sm text-muted-foreground">
                             暂未配置该地区 Apple App Store 订阅价
                           </div>
                         ) : (
@@ -359,20 +198,29 @@ export function PriceTable({
                                 typeof savings === 'number' && basePrice
                                   ? (savings / basePrice) * 100
                                   : null;
+                              const showSavings =
+                                currency.code !== 'USD' &&
+                                price !== null &&
+                                savings !== null &&
+                                savingsPercent !== null &&
+                                Math.abs(savingsPercent) > 0.05;
+                              const showBaseline =
+                                currency.code === 'USD' && price !== null;
 
                               return (
                                 <div
                                   key={channel.id}
                                   className={cn(
-                                    'p-3 rounded-lg transition-all',
+                                    'rounded-lg p-3 transition-all',
+                                    'flex min-h-[88px] flex-col justify-between',
                                     isLowest
-                                      ? 'bg-primary/10 border border-primary/30'
-                                      : 'bg-background/50'
+                                      ? 'border border-primary/35 bg-soft-green shadow-sm shadow-primary/10'
+                                      : 'border border-transparent bg-background/70'
                                   )}
                                 >
                                   <div className="flex items-center justify-between gap-3">
                                     <div className="flex items-center gap-2">
-                                      <CreditCard className="w-4 h-4 text-muted-foreground" />
+                                      <CreditCard className="h-4 w-4 text-brand-blue" />
                                       <span className="text-sm text-muted-foreground">
                                         {channel.name}
                                       </span>
@@ -382,26 +230,23 @@ export function PriceTable({
                                         <div
                                           className={cn(
                                             'font-mono font-semibold',
-                                            isLowest ? 'text-primary' : 'text-foreground'
+                                            isLowest ? 'text-primary' : 'text-brand-navy'
                                           )}
                                         >
                                           {formatPrice(price)}
                                         </div>
                                       ) : (
-                                        <div className="text-sm text-amber-300">不可用</div>
+                                        <div className="text-sm text-amber-700">不可用</div>
                                       )}
                                     </div>
                                   </div>
 
-                                  {currency.code !== 'USD' &&
-                                    price !== null &&
-                                    savings !== null &&
-                                    savingsPercent !== null &&
-                                    Math.abs(savingsPercent) > 0.05 && (
+                                  <div className="mt-2 min-h-4">
+                                    {showSavings && (
                                       <div
                                         className={cn(
-                                          'mt-2 flex items-center gap-1 text-xs',
-                                          savings > 0 ? 'text-primary' : 'text-red-400'
+                                          'flex items-center gap-1 text-xs',
+                                          savings > 0 ? 'text-primary' : 'text-red-500'
                                         )}
                                       >
                                         {savings > 0 ? (
@@ -416,8 +261,16 @@ export function PriceTable({
                                       </div>
                                     )}
 
+                                    {showBaseline && (
+                                      <div className="flex items-center gap-1 text-xs text-muted-foreground">
+                                        <Minus className="w-3 h-3" />
+                                        <span>基准数据</span>
+                                      </div>
+                                    )}
+                                  </div>
+
                                   {!isSuccessRate(result) && result && (
-                                    <p className="mt-2 text-xs leading-5 text-amber-200/90">
+                                    <p className="mt-2 text-xs leading-5 text-amber-700">
                                       {result.message}
                                     </p>
                                   )}
@@ -433,7 +286,7 @@ export function PriceTable({
               </div>
 
               {lowest && filteredCurrencies.length > 1 && (
-                <div className="bg-primary/5 px-6 py-3 border-t border-border">
+                <div className="border-t border-border/80 bg-gradient-to-r from-soft-green to-white px-6 py-3">
                   <div className="flex items-center justify-between gap-3">
                     <span className="text-sm text-muted-foreground">最优方案</span>
                     <span className="text-sm font-medium text-primary">
@@ -452,7 +305,7 @@ export function PriceTable({
       </div>
 
       {filteredPackages.length === 0 && (
-        <div className="bg-card rounded-xl border border-border p-12 text-center">
+        <div className="rounded-2xl border border-border bg-card p-12 text-center shadow-lg shadow-brand-navy/5">
           <p className="text-muted-foreground">请选择至少一个套餐</p>
         </div>
       )}

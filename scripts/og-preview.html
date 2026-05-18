@@ -1,0 +1,490 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>OG Preview</title>
+    <style>
+      :root {
+        --bg: #09090b;
+        --panel: rgba(24, 24, 27, 0.82);
+        --panel-strong: rgba(17, 24, 39, 0.88);
+        --line: rgba(255, 255, 255, 0.08);
+        --text: #fafafa;
+        --muted: rgba(250, 250, 250, 0.7);
+        --soft: rgba(250, 250, 250, 0.48);
+        --green: #10b981;
+        --green-2: #34d399;
+        --emerald-deep: #064e3b;
+      }
+
+      * { box-sizing: border-box; }
+      html, body {
+        width: 100%;
+        height: 100%;
+        margin: 0;
+        background: var(--bg);
+        font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+      }
+
+      body {
+        display: grid;
+        place-items: center;
+      }
+
+      .canvas {
+        position: relative;
+        width: 1200px;
+        height: 630px;
+        overflow: hidden;
+        color: var(--text);
+        background:
+          radial-gradient(circle at 12% 18%, rgba(16, 185, 129, 0.24), transparent 28%),
+          radial-gradient(circle at 88% 18%, rgba(52, 211, 153, 0.18), transparent 22%),
+          radial-gradient(circle at 82% 78%, rgba(16, 185, 129, 0.14), transparent 24%),
+          linear-gradient(135deg, #05070b 0%, #0b1017 42%, #09090b 100%);
+      }
+
+      .noise,
+      .grid,
+      .orb,
+      .orb2,
+      .orb3 {
+        position: absolute;
+        inset: 0;
+        pointer-events: none;
+      }
+
+      .grid {
+        background-image:
+          linear-gradient(rgba(255,255,255,0.035) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(255,255,255,0.035) 1px, transparent 1px);
+        background-size: 56px 56px;
+        mask-image: linear-gradient(to bottom, rgba(255,255,255,0.24), rgba(255,255,255,0));
+      }
+
+      .orb {
+        inset: auto auto -120px -40px;
+        width: 420px;
+        height: 420px;
+        border-radius: 999px;
+        background: radial-gradient(circle, rgba(16, 185, 129, 0.24) 0%, rgba(16,185,129,0.06) 42%, transparent 72%);
+        filter: blur(8px);
+      }
+
+      .orb2 {
+        inset: 40px -120px auto auto;
+        width: 320px;
+        height: 320px;
+        border-radius: 999px;
+        background: radial-gradient(circle, rgba(52, 211, 153, 0.18) 0%, rgba(52,211,153,0.04) 50%, transparent 76%);
+        filter: blur(10px);
+      }
+
+      .orb3 {
+        inset: auto 280px 46px auto;
+        width: 260px;
+        height: 260px;
+        border-radius: 999px;
+        background: radial-gradient(circle, rgba(255, 255, 255, 0.08) 0%, transparent 72%);
+        filter: blur(18px);
+      }
+
+      .shell {
+        position: absolute;
+        inset: 32px;
+        border-radius: 32px;
+        border: 1px solid rgba(255,255,255,0.09);
+        background: linear-gradient(180deg, rgba(255,255,255,0.04), rgba(255,255,255,0.015));
+        box-shadow:
+          inset 0 1px 0 rgba(255,255,255,0.06),
+          0 18px 60px rgba(0,0,0,0.32);
+      }
+
+      .content {
+        position: relative;
+        z-index: 2;
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+        padding: 40px 44px;
+      }
+
+      .topbar {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
+
+      .brand {
+        display: inline-flex;
+        align-items: center;
+        gap: 14px;
+      }
+
+      .brand-mark {
+        display: grid;
+        place-items: center;
+        width: 48px;
+        height: 48px;
+        border-radius: 14px;
+        border: 1px solid rgba(16, 185, 129, 0.32);
+        background: linear-gradient(180deg, rgba(16,185,129,0.22), rgba(16,185,129,0.08));
+        color: #d1fae5;
+        font-size: 20px;
+        box-shadow: inset 0 1px 0 rgba(255,255,255,0.08), 0 10px 30px rgba(16,185,129,0.16);
+      }
+
+      .brand-copy {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+      }
+
+      .eyebrow {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        padding: 10px 16px;
+        border-radius: 999px;
+        border: 1px solid rgba(255,255,255,0.08);
+        background: rgba(255,255,255,0.05);
+        color: var(--muted);
+        font-size: 14px;
+        letter-spacing: 0.08em;
+      }
+
+      .eyebrow .dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 999px;
+        background: linear-gradient(180deg, #34d399, #10b981);
+        box-shadow: 0 0 18px rgba(52, 211, 153, 0.85);
+      }
+
+      .main {
+        display: flex;
+        gap: 30px;
+        margin-top: 26px;
+        flex: 1;
+      }
+
+      .left {
+        width: 56%;
+        display: flex;
+        flex-direction: column;
+      }
+
+      h1 {
+        margin: 0;
+        font-size: 54px;
+        line-height: 1.02;
+        letter-spacing: -0.05em;
+        font-weight: 760;
+      }
+
+      .accent {
+        background: linear-gradient(180deg, #ecfdf5, #6ee7b7);
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+      }
+
+      .subtitle {
+        margin-top: 16px;
+        font-size: 20px;
+        line-height: 1.55;
+        color: var(--muted);
+        max-width: 600px;
+      }
+
+      .chips {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+        margin-top: 18px;
+      }
+
+      .chip {
+        padding: 12px 16px;
+        border-radius: 999px;
+        background: rgba(255,255,255,0.06);
+        border: 1px solid rgba(255,255,255,0.08);
+        color: var(--text);
+        font-size: 16px;
+      }
+
+      .footnote {
+        margin-top: auto;
+        font-size: 16px;
+        color: var(--soft);
+        letter-spacing: 0.03em;
+      }
+
+      .right {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        gap: 14px;
+      }
+
+      .hero-card {
+        position: relative;
+        border-radius: 28px;
+        padding: 18px;
+        background: linear-gradient(180deg, rgba(5, 150, 105, 0.16), rgba(17, 24, 39, 0.92));
+        border: 1px solid rgba(110, 231, 183, 0.20);
+        box-shadow: inset 0 1px 0 rgba(255,255,255,0.08), 0 16px 36px rgba(0,0,0,0.30);
+      }
+
+      .hero-card::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        border-radius: inherit;
+        background: linear-gradient(135deg, rgba(255,255,255,0.08), transparent 44%, transparent 60%, rgba(255,255,255,0.03));
+        pointer-events: none;
+      }
+
+      .card-label {
+        font-size: 16px;
+        color: rgba(209, 250, 229, 0.82);
+        letter-spacing: 0.08em;
+      }
+
+      .card-title {
+        margin-top: 10px;
+        font-size: 26px;
+        font-weight: 700;
+        letter-spacing: -0.03em;
+      }
+
+      .money-row {
+        display: flex;
+        align-items: flex-end;
+        gap: 16px;
+        margin-top: 18px;
+      }
+
+      .money {
+        font-size: 58px;
+        line-height: 0.95;
+        font-weight: 800;
+        letter-spacing: -0.06em;
+      }
+
+      .money-note {
+        padding-bottom: 8px;
+        font-size: 16px;
+        color: var(--muted);
+      }
+
+      .divider {
+        height: 1px;
+        margin: 18px 0 14px;
+        background: linear-gradient(90deg, rgba(255,255,255,0.12), rgba(255,255,255,0.02));
+      }
+
+      .mini-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 12px;
+      }
+
+      .mini {
+        border-radius: 20px;
+        padding: 14px 12px 12px;
+        background: rgba(255,255,255,0.05);
+        border: 1px solid rgba(255,255,255,0.08);
+      }
+
+      .mini .flag {
+        font-size: 18px;
+      }
+
+      .mini .region {
+        margin-top: 8px;
+        font-size: 14px;
+        color: var(--soft);
+      }
+
+      .mini .price {
+        margin-top: 8px;
+        font-size: 20px;
+        font-weight: 700;
+        letter-spacing: -0.03em;
+      }
+
+      .compare {
+        display: grid;
+        grid-template-columns: 1.25fr 0.85fr;
+        gap: 14px;
+      }
+
+      .compare-card,
+      .badge-card {
+        border-radius: 24px;
+        padding: 18px;
+        background: rgba(255,255,255,0.05);
+        border: 1px solid rgba(255,255,255,0.08);
+        box-shadow: inset 0 1px 0 rgba(255,255,255,0.05);
+      }
+
+      .compare-title,
+      .badge-title {
+        font-size: 16px;
+        color: var(--muted);
+        letter-spacing: 0.06em;
+      }
+
+      .compare-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+        margin-top: 10px;
+        padding: 10px 0;
+        border-bottom: 1px solid rgba(255,255,255,0.07);
+      }
+
+      .compare-row:last-child { border-bottom: 0; }
+
+      .compare-left {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        font-size: 16px;
+      }
+
+      .compare-pill {
+        width: 34px;
+        height: 34px;
+        border-radius: 10px;
+        display: grid;
+        place-items: center;
+        background: rgba(16,185,129,0.14);
+        border: 1px solid rgba(16,185,129,0.22);
+      }
+
+      .compare-value {
+        font-size: 18px;
+        font-weight: 700;
+        letter-spacing: -0.03em;
+      }
+
+      .badge-card {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        background: linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.03));
+      }
+
+      .badge-value {
+        font-size: 28px;
+        line-height: 1.06;
+        font-weight: 760;
+        letter-spacing: -0.04em;
+      }
+
+      .badge-copy {
+        font-size: 15px;
+        color: var(--muted);
+        line-height: 1.45;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="canvas">
+      <div class="grid"></div>
+      <div class="orb"></div>
+      <div class="orb2"></div>
+      <div class="orb3"></div>
+      <div class="shell"></div>
+
+      <div class="content">
+        <div class="topbar">
+          <div class="brand">
+            <div class="brand-mark">¥</div>
+            <div class="brand-copy">
+              <div style="font-size: 20px; font-weight: 700; letter-spacing: -0.03em;">汇率转换器</div>
+              <div style="font-size: 15px; color: var(--soft);">多货币订阅价格计算</div>
+            </div>
+          </div>
+          <div class="eyebrow"><span class="dot"></span>AI 订阅比价 · Social Preview</div>
+        </div>
+
+        <div class="main">
+          <div class="left">
+            <h1>
+              一眼看出<br />
+              <span class="accent">哪种订阅更划算</span>
+            </h1>
+            <div class="subtitle">
+              把 ChatGPT、Claude、X Premium 的跨区标价，结合 Visa / Mastercard 汇率，统一换算成人民币。
+            </div>
+            <div class="chips">
+              <div class="chip">Apple 区域价</div>
+              <div class="chip">Visa / Mastercard</div>
+              <div class="chip">统一换算 CNY</div>
+            </div>
+            <div class="footnote">支持美元 / 土耳其里拉 / 尼日利亚奈拉等多币种快速比较</div>
+          </div>
+
+          <div class="right">
+            <div class="hero-card">
+              <div class="card-label">热门示例 · ChatGPT Plus</div>
+              <div class="card-title">不同地区标价，放进同一张表里看</div>
+              <div class="money-row">
+                <div class="money">¥ 人民币</div>
+                <div class="money-note">自动换算 · 更适合直接做购买决策</div>
+              </div>
+              <div class="divider"></div>
+              <div class="mini-grid">
+                <div class="mini">
+                  <div class="flag">🇺🇸</div>
+                  <div class="region">美国区</div>
+                  <div class="price">$19.99</div>
+                </div>
+                <div class="mini">
+                  <div class="flag">🇹🇷</div>
+                  <div class="region">土耳其区</div>
+                  <div class="price">₺499.99</div>
+                </div>
+                <div class="mini">
+                  <div class="flag">🇳🇬</div>
+                  <div class="region">尼日利亚区</div>
+                  <div class="price">₦31,500</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="compare">
+              <div class="compare-card">
+                <div class="compare-title">你能快速比较</div>
+                <div class="compare-row">
+                  <div class="compare-left"><div class="compare-pill">↕</div><span>同服务跨区价格</span></div>
+                  <div class="compare-value">更直观</div>
+                </div>
+                <div class="compare-row">
+                  <div class="compare-left"><div class="compare-pill">💳</div><span>Visa / MC 汇率差</span></div>
+                  <div class="compare-value">少踩坑</div>
+                </div>
+                <div class="compare-row">
+                  <div class="compare-left"><div class="compare-pill">⚡</div><span>最终人民币成本</span></div>
+                  <div class="compare-value">省决策</div>
+                </div>
+              </div>
+              <div class="badge-card">
+                <div>
+                  <div class="badge-title">分享卡重点</div>
+                  <div class="badge-value">价格差<br />一图看清</div>
+                </div>
+                <div class="badge-copy">适合朋友圈、X / Twitter、Telegram 预览封面。</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
