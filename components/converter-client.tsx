@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { PriceTable } from '@/components/price-table';
 import { Header } from '@/components/header';
 import { ProjectIntroCard } from '@/components/project-intro-card';
@@ -11,6 +11,10 @@ import {
   parseFilterState,
   type FilterState,
 } from '@/lib/filter-state';
+import {
+  getPackagesFromExchangeRates,
+  getRegionsFromExchangeRates,
+} from '@/lib/data';
 import type { ExchangeRatesResponse } from '@/lib/exchange-rate-types';
 
 interface ConverterClientProps {
@@ -18,11 +22,28 @@ interface ConverterClientProps {
 }
 
 export function ConverterClient({ exchangeRates }: ConverterClientProps) {
-  const [filters, setFilters] = useState<FilterState>(getDefaultFilterState);
+  const availableRegions = useMemo(
+    () => getRegionsFromExchangeRates(exchangeRates),
+    [exchangeRates]
+  );
+  const availablePackages = useMemo(
+    () => getPackagesFromExchangeRates(exchangeRates),
+    [exchangeRates]
+  );
+
+  const [filters, setFilters] = useState<FilterState>(() =>
+    getDefaultFilterState(availableRegions, availablePackages)
+  );
 
   useEffect(() => {
     const syncFiltersFromLocation = () => {
-      setFilters(parseFilterState(window.location.search));
+      setFilters(
+        parseFilterState(
+          window.location.search,
+          availableRegions,
+          availablePackages
+        )
+      );
     };
 
     syncFiltersFromLocation();
@@ -31,14 +52,21 @@ export function ConverterClient({ exchangeRates }: ConverterClientProps) {
     return () => {
       window.removeEventListener('popstate', syncFiltersFromLocation);
     };
-  }, []);
+  }, [availablePackages, availableRegions]);
 
-  const updateFilters = useCallback((nextFilters: FilterState) => {
-    setFilters(nextFilters);
+  const updateFilters = useCallback(
+    (nextFilters: FilterState) => {
+      setFilters(nextFilters);
 
-    const nextUrl = buildFilterSearch(nextFilters);
-    window.history.replaceState(window.history.state, '', nextUrl);
-  }, []);
+      const nextUrl = buildFilterSearch(
+        nextFilters,
+        availableRegions,
+        availablePackages
+      );
+      window.history.replaceState(window.history.state, '', nextUrl);
+    },
+    [availablePackages, availableRegions]
+  );
 
   return (
     <div className="relative min-h-screen overflow-hidden bg-background text-foreground">
@@ -48,6 +76,7 @@ export function ConverterClient({ exchangeRates }: ConverterClientProps) {
       <main className="container relative z-10 mx-auto max-w-7xl px-4 py-8">
         <ProjectIntroCard fetchedAt={exchangeRates.fetchedAt} />
         <MobileControlsDrawer
+          availablePackages={availablePackages}
           selectedPackages={filters.packages}
           onPackageChange={(nextPackages) =>
             updateFilters({ ...filters, packages: nextPackages })
@@ -55,6 +84,8 @@ export function ConverterClient({ exchangeRates }: ConverterClientProps) {
         />
         <PriceTable
           exchangeRates={exchangeRates}
+          availableRegions={availableRegions}
+          availablePackages={availablePackages}
           selectedCurrencies={filters.currencies}
           selectedChannels={filters.channels}
           selectedPackages={filters.packages}

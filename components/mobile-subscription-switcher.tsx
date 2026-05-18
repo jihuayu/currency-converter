@@ -2,13 +2,11 @@
 
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { Check, ChevronDown, Layers3 } from 'lucide-react';
-import {
-  packages,
-  type PackageId,
-} from '@/lib/data';
+import type { PackageId, SubscriptionPackage } from '@/lib/data';
 import { cn } from '@/lib/utils';
 
 interface MobileSubscriptionSwitcherProps {
+  availablePackages: readonly SubscriptionPackage[];
   selectedPackages: PackageId[];
   onPackageChange: (packages: PackageId[]) => void;
   variant?: 'sticky' | 'inline';
@@ -16,6 +14,7 @@ interface MobileSubscriptionSwitcherProps {
 }
 
 export function MobileSubscriptionSwitcher({
+  availablePackages,
   selectedPackages,
   onPackageChange,
   variant = 'sticky',
@@ -27,16 +26,16 @@ export function MobileSubscriptionSwitcher({
   const selectedLabel = useMemo(() => {
     if (selectedPackages.length === 1) {
       return (
-        packages.find((pkg) => pkg.id === selectedPackages[0])?.name ?? '选择订阅'
+        availablePackages.find((pkg) => pkg.id === selectedPackages[0])?.name ?? '选择订阅'
       );
     }
 
-    if (selectedPackages.length === packages.length) {
+    if (selectedPackages.length === availablePackages.length) {
       return '全部订阅';
     }
 
     return `${selectedPackages.length} 个订阅`;
-  }, [selectedPackages]);
+  }, [availablePackages, selectedPackages]);
 
   useEffect(() => {
     if (!isOpen) {
@@ -75,26 +74,26 @@ export function MobileSubscriptionSwitcher({
     <div className={cn(variant === 'inline' ? 'space-y-2' : undefined)}>
       <button
         type="button"
-        onClick={() => selectPackages(packages.map((pkg) => pkg.id))}
+        onClick={() => selectPackages(availablePackages.map((pkg) => pkg.id))}
         className={cn(
           'flex w-full items-center justify-between rounded-xl px-3 py-3 text-left text-sm transition-colors',
-          selectedPackages.length === packages.length
+          selectedPackages.length === availablePackages.length
             ? 'bg-primary/15 text-primary'
             : 'text-foreground hover:bg-secondary/70'
         )}
       >
         <span>
           <span className="block font-medium">全部订阅</span>
-          <span className="text-xs text-muted-foreground">包含测试金额</span>
+          <span className="text-xs text-muted-foreground">美国 + 最便宜的 2 个地区</span>
         </span>
-        {selectedPackages.length === packages.length && (
+        {selectedPackages.length === availablePackages.length && (
           <Check className="h-4 w-4" />
         )}
       </button>
 
       <div className="my-2 h-px bg-border" />
 
-      {packages.map((pkg) => {
+      {availablePackages.map((pkg) => {
         const isSelected =
           selectedPackages.length === 1 && selectedPackages[0] === pkg.id;
 

@@ -1,4 +1,7 @@
-import type { ChannelId, CurrencyCode } from '@/lib/data';
+export type ChannelId = 'visa' | 'mastercard';
+export type CurrencyCode = string;
+export type RegionCode = string;
+export type PackageId = string;
 
 export interface SuccessfulRateResult {
   provider: ChannelId;
@@ -27,11 +30,48 @@ export type CurrencyRateMap = Record<
   Partial<Record<ChannelId, ProviderRateResult>>
 >;
 
+export interface AppStorePriceRegion {
+  code: RegionCode;
+  name: string;
+  currency: CurrencyCode;
+  symbol: string;
+  flag: string;
+}
+
+export interface AppStorePackagePrice {
+  amount: number;
+  currency: CurrencyCode;
+  region: RegionCode;
+  regionName: string;
+  amountCny?: number;
+}
+
+export interface AppStorePricePackage {
+  id: PackageId;
+  name: string;
+  prices: Record<RegionCode, AppStorePackagePrice>;
+  description: string;
+  pricingNote: string;
+  sourceSkuName?: string;
+  duration?: string | null;
+}
+
+export interface AppStorePricesResponse {
+  appId: string;
+  appName: string;
+  sourceUrl: string;
+  fetchedAt: string;
+  regions: AppStorePriceRegion[];
+  packages: AppStorePricePackage[];
+  notes: string[];
+}
+
 export interface ExchangeRatesResponse {
   baseCurrency: 'CNY';
   sampleAmount: number;
   fetchedAt: string;
   currencies: CurrencyRateMap;
+  appStorePrices?: AppStorePricesResponse;
   notes: string[];
 }
 

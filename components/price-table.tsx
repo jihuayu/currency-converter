@@ -3,42 +3,60 @@
 import { useMemo } from 'react';
 import {
   channels,
-  currencies,
   formatPrice,
   getPackageLocalPrice,
-  packages,
   type ChannelId,
-  type CurrencyCode,
+  type CurrencyInfo,
   type PackageId,
+  type RegionCode,
+  type SubscriptionPackage,
 } from '@/lib/data';
 import {
   isSuccessRate,
+  type CurrencyCode,
   type ExchangeRatesResponse,
   type ProviderRateResult,
 } from '@/lib/exchange-rate-types';
 import { cn } from '@/lib/utils';
 import { CreditCard, Minus, TrendingDown, TrendingUp } from 'lucide-react';
 
+function billingSuffix(duration: string | null | undefined): string {
+  switch (duration) {
+    case 'monthly':
+      return '/月';
+    case 'yearly':
+      return '/年';
+    case 'weekly':
+      return '/周';
+    default:
+      return '/次';
+  }
+}
+
 interface PriceTableProps {
   exchangeRates: ExchangeRatesResponse;
-  selectedCurrencies: CurrencyCode[];
+  availableRegions: readonly CurrencyInfo[];
+  availablePackages: readonly SubscriptionPackage[];
+  selectedCurrencies: RegionCode[];
   selectedChannels: ChannelId[];
   selectedPackages: PackageId[];
 }
 
 export function PriceTable({
   exchangeRates,
+  availableRegions,
+  availablePackages,
   selectedCurrencies,
   selectedChannels,
   selectedPackages,
 }: PriceTableProps) {
   const filteredPackages = useMemo(
-    () => packages.filter((item) => selectedPackages.includes(item.id)),
-    [selectedPackages]
+    () => availablePackages.filter((item) => selectedPackages.includes(item.id)),
+    [availablePackages, selectedPackages]
   );
-  const filteredCurrencies = useMemo(
-    () => currencies.filter((item) => selectedCurrencies.includes(item.code)),
-    [selectedCurrencies]
+  const filteredRegions = useMemo(
+    () => availableRegions.filter((item) => selectedCurrencies.includes(item.code)),
+    [availableRegions, selectedCurrencies]
   );
   const filteredChannels = useMemo(
     () => channels.filter((item) => selectedChannels.includes(item.id)),
@@ -66,28 +84,28 @@ export function PriceTable({
   };
 
   const getLowestPrice = (
-    pkg: (typeof packages)[number]
-  ): { currency: CurrencyCode; channel: ChannelId; price: number } | null => {
+    pkg: SubscriptionPackage
+  ): { region: RegionCode; channel: ChannelId; price: number } | null => {
     let lowest: {
-      currency: CurrencyCode;
+      region: RegionCode;
       channel: ChannelId;
       price: number;
     } | null = null;
 
-    for (const currency of filteredCurrencies) {
-      const localPrice = getPackageLocalPrice(pkg, currency.code);
+    for (const region of filteredRegions) {
+      const localPrice = getPackageLocalPrice(pkg, region.code);
       if (localPrice === null) {
         continue;
       }
 
       for (const channel of filteredChannels) {
-        const price = getCNYPrice(localPrice, currency.code, channel.id);
+        const price = getCNYPrice(localPrice.amount, localPrice.currency, channel.id);
         if (price === null) {
           continue;
         }
 
         if (!lowest || price < lowest.price) {
-          lowest = { currency: currency.code, channel: channel.id, price };
+          lowest = { region: region.code, channel: channel.id, price };
         }
       }
     }
@@ -95,21 +113,21 @@ export function PriceTable({
     return lowest;
   };
 
-  const getBasePrice = (pkg: (typeof packages)[number]): number | null => {
-    const usdAmount = getPackageLocalPrice(pkg, 'USD');
-    if (usdAmount === null) {
+  const getBasePrice = (pkg: SubscriptionPackage): number | null => {
+    const usPrice = getPackageLocalPrice(pkg, 'US');
+    if (usPrice === null) {
       return null;
     }
 
-    const usdPrices = filteredChannels
-      .map((channel) => getCNYPrice(usdAmount, 'USD', channel.id))
+    const usPrices = filteredChannels
+      .map((channel) => getCNYPrice(usPrice.amount, usPrice.currency, channel.id))
       .filter((price): price is number => price !== null);
 
-    if (usdPrices.length === 0) {
+    if (usPrices.length === 0) {
       return null;
     }
 
-    return Math.min(...usdPrices);
+    return Math.min(...usPrices);
   };
 
   return (
@@ -118,7 +136,10 @@ export function PriceTable({
         {filteredPackages.map((pkg) => {
           const lowest = getLowestPrice(pkg);
           const basePrice = getBasePrice(pkg);
-          const usdAmount = getPackageLocalPrice(pkg, 'USD');
+          const usPrice = getPackageLocalPrice(pkg, 'US');
+          const packageRegions = filteredRegions.filter(
+            (region) => getPackageLocalPrice(pkg, region.code) !== null
+          );
 
           return (
             <div
@@ -138,13 +159,13 @@ export function PriceTable({
                       {pkg.pricingNote}
                     </p>
                   </div>
-                  {usdAmount !== null && (
+                  {usPrice !== null && (
                     <div className="text-right">
                       <div className="text-sm text-muted-foreground">美区参考价</div>
                       <div className="font-mono font-semibold text-brand-navy">
-                        {formatPrice(usdAmount, 'USD')}
+                        {formatPrice(usPrice.amount, usPrice.currency)}
                         <span className="text-muted-foreground font-normal">
-                          /月
+                          {billingSuffix(pkg.duration)}
                         </span>
                       </div>
                     </div>
@@ -154,41 +175,41 @@ export function PriceTable({
 
               <div className="p-4">
                 <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-3">
-                  {filteredCurrencies.map((currency) => {
-                    const listedAmount = getPackageLocalPrice(pkg, currency.code);
+                  {packageRegions.map((region) => {
+                    const listedPrice = getPackageLocalPrice(pkg, region.code);
 
                     return (
                       <div
-                        key={currency.code}
+                        key={region.code}
                         className="rounded-2xl border border-border/70 bg-white/75 p-4 shadow-sm shadow-brand-navy/5"
                       >
                         <div className="flex items-center gap-2 mb-3">
-                          <span className="text-xl">{currency.flag}</span>
+                          <span className="text-xl">{region.flag}</span>
                           <span className="font-semibold text-brand-navy">
-                            {currency.name}
+                            {region.name}
                           </span>
                           <span className="text-sm text-muted-foreground ml-auto font-mono">
-                            {listedAmount !== null
-                              ? formatPrice(listedAmount, currency.code)
+                            {listedPrice !== null
+                              ? formatPrice(listedPrice.amount, listedPrice.currency)
                               : '无当地价'}
                           </span>
                         </div>
 
-                        {listedAmount === null ? (
+                        {listedPrice === null ? (
                           <div className="rounded-xl border border-border/70 bg-background/60 px-3 py-3 text-sm text-muted-foreground">
                             暂未配置该地区 Apple App Store 订阅价
                           </div>
                         ) : (
                           <div className="space-y-2">
                             {filteredChannels.map((channel) => {
-                              const result = getRateResult(currency.code, channel.id);
+                              const result = getRateResult(listedPrice.currency, channel.id);
                               const price = getCNYPrice(
-                                listedAmount,
-                                currency.code,
+                                listedPrice.amount,
+                                listedPrice.currency,
                                 channel.id
                               );
                               const isLowest =
-                                lowest?.currency === currency.code &&
+                                lowest?.region === region.code &&
                                 lowest?.channel === channel.id;
                               const savings =
                                 typeof basePrice === 'number' && typeof price === 'number'
@@ -199,13 +220,12 @@ export function PriceTable({
                                   ? (savings / basePrice) * 100
                                   : null;
                               const showSavings =
-                                currency.code !== 'USD' &&
+                                region.code !== 'US' &&
                                 price !== null &&
                                 savings !== null &&
                                 savingsPercent !== null &&
                                 Math.abs(savingsPercent) > 0.05;
-                              const showBaseline =
-                                currency.code === 'USD' && price !== null;
+                              const showBaseline = region.code === 'US' && price !== null;
 
                               return (
                                 <div
@@ -285,12 +305,12 @@ export function PriceTable({
                 </div>
               </div>
 
-              {lowest && filteredCurrencies.length > 1 && (
+              {lowest && packageRegions.length > 1 && (
                 <div className="border-t border-border/80 bg-gradient-to-r from-soft-green to-white px-6 py-3">
                   <div className="flex items-center justify-between gap-3">
                     <span className="text-sm text-muted-foreground">最优方案</span>
                     <span className="text-sm font-medium text-primary">
-                      {currencies.find((item) => item.code === lowest.currency)?.name}{' '}
+                      {availableRegions.find((item) => item.code === lowest.region)?.name}{' '}
                       + {channels.find((item) => item.id === lowest.channel)?.name}
                       <span className="ml-2 font-mono">
                         {formatPrice(lowest.price)}

@@ -1,114 +1,135 @@
-export const currencies = [
-  { code: 'USD', name: '美元', symbol: '$', flag: '🇺🇸' },
-  { code: 'TRY', name: '土耳其里拉', symbol: '₺', flag: '🇹🇷' },
-  { code: 'NGN', name: '尼日利亚奈拉', symbol: '₦', flag: '🇳🇬' },
-] as const;
+import type {
+  AppStorePricePackage,
+  AppStorePriceRegion,
+  ChannelId,
+  CurrencyCode,
+  ExchangeRatesResponse,
+  PackageId,
+  RegionCode,
+} from '@/lib/exchange-rate-types';
 
-export type CurrencyCode = (typeof currencies)[number]['code'];
+export type { ChannelId, CurrencyCode, PackageId, RegionCode };
 
 export const channels = [
   { id: 'visa', name: 'Visa', description: 'Visa 官方汇率接口' },
   { id: 'mastercard', name: 'Mastercard', description: 'Mastercard 官方汇率接口' },
-] as const;
-
-export type ChannelId = (typeof channels)[number]['id'];
-
-export type PackagePrices = Partial<Record<CurrencyCode, number>>;
-
-export interface SubscriptionPackage {
-  id: string;
+] as const satisfies readonly {
+  id: ChannelId;
   name: string;
-  prices: PackagePrices;
   description: string;
-  pricingNote: string;
-}
+}[];
 
-export const packages = [
+export const fallbackRegions = [
+  { code: 'US', name: '美国', currency: 'USD', symbol: '$', flag: '🇺🇸' },
+  { code: 'TR', name: '土耳其', currency: 'TRY', symbol: '₺', flag: '🇹🇷' },
+  { code: 'NG', name: '尼日利亚', currency: 'NGN', symbol: '₦', flag: '🇳🇬' },
+] as const satisfies readonly AppStorePriceRegion[];
+
+export const currencies = fallbackRegions;
+export type CurrencyInfo = AppStorePriceRegion;
+
+export type PackagePrices = AppStorePricePackage['prices'];
+
+export interface SubscriptionPackage extends AppStorePricePackage {}
+
+export const fallbackPackages = [
   {
     id: 'chatgpt-plus',
     name: 'ChatGPT Plus',
-    prices: { USD: 19.99, TRY: 499.99, NGN: 31500 },
+    prices: {
+      US: { amount: 19.99, currency: 'USD', region: 'US', regionName: '美国' },
+      TR: { amount: 499.99, currency: 'TRY', region: 'TR', regionName: '土耳其' },
+      NG: { amount: 31500, currency: 'NGN', region: 'NG', regionName: '尼日利亚' },
+    },
     description: 'OpenAI ChatGPT Plus 订阅',
     pricingNote: '土区/尼区使用当地 Apple App Store 标价',
   },
   {
     id: 'chatgpt-pro',
     name: 'ChatGPT Pro 20x',
-    prices: { USD: 200, TRY: 7999.99, NGN: 299900 },
+    prices: {
+      US: { amount: 200, currency: 'USD', region: 'US', regionName: '美国' },
+      TR: { amount: 7999.99, currency: 'TRY', region: 'TR', regionName: '土耳其' },
+      NG: { amount: 299900, currency: 'NGN', region: 'NG', regionName: '尼日利亚' },
+    },
     description: 'OpenAI ChatGPT Pro 20x 订阅',
     pricingNote: '土区/尼区使用当地 Apple App Store 标价',
   },
-  {
-    id: 'claude-max-20x',
-    name: 'Claude Max 20x',
-    prices: { USD: 249.99, TRY: 9999.99, NGN: 200000 },
-    description: 'Anthropic Claude Max 20x 订阅',
-    pricingNote: '土区/尼区使用当地 Apple App Store 标价',
-  },
-  {
-    id: 'chatgpt-pro-5x',
-    name: 'ChatGPT Pro 5x',
-    prices: { USD: 100, TRY: 5299.99, NGN: 144900 },
-    description: 'OpenAI ChatGPT Pro 5x 订阅',
-    pricingNote: '土区/尼区使用当地 Apple App Store 标价',
-  },
-  {
-    id: 'claude-pro',
-    name: 'Claude Pro',
-    prices: { USD: 20, TRY: 799.99, NGN: 14900 },
-    description: 'Anthropic Claude Pro 订阅',
-    pricingNote: '土区/尼区使用当地 Apple App Store 标价',
-  },
-  {
-    id: 'claude-max',
-    name: 'Claude Max 5x',
-    prices: { USD: 124.99, TRY: 4999.99, NGN: 100000 },
-    description: 'Anthropic Claude Max 5x 订阅',
-    pricingNote: '土区/尼区使用当地 Apple App Store 标价',
-  },
-  {
-    id: 'twitter-premium',
-    name: 'Twitter Premium',
-    prices: { USD: 8, TRY: 150, NGN: 3650 },
-    description: 'Twitter / X Premium 订阅',
-    pricingNote: '使用 X 官方订阅页面标价',
-  },
-  {
-    id: 'twitter-premium-plus',
-    name: 'Twitter Premium+',
-    prices: { USD: 40, TRY: 1450, NGN: 60390 },
-    description: 'Twitter / X Premium+ 订阅',
-    pricingNote: '使用 X 官方订阅页面标价',
-  },
 ] as const satisfies readonly SubscriptionPackage[];
 
-export type PackageId = (typeof packages)[number]['id'];
+export const packages = fallbackPackages;
 
-export const defaultPackageIds = packages
-  .filter((pkg) => pkg.id !== 'custom-100')
-  .map((pkg) => pkg.id) as PackageId[];
+const currencySymbols: Record<string, string> = {
+  USD: '$',
+  CNY: '¥',
+  TRY: '₺',
+  NGN: '₦',
+  EGP: 'E£',
+  INR: '₹',
+  PKR: '₨',
+  BRL: 'R$',
+  PHP: '₱',
+  HKD: 'HK$',
+  TWD: 'NT$',
+  JPY: '¥',
+  KRW: '₩',
+  EUR: '€',
+  GBP: '£',
+  AUD: 'A$',
+  CAD: 'C$',
+  SGD: 'S$',
+  MXN: 'MX$',
+  RUB: '₽',
+  VND: '₫',
+};
+
+export function getRegionsFromExchangeRates(
+  exchangeRates: ExchangeRatesResponse
+): AppStorePriceRegion[] {
+  return exchangeRates.appStorePrices?.regions?.length
+    ? exchangeRates.appStorePrices.regions
+    : [...fallbackRegions];
+}
+
+export function getPackagesFromExchangeRates(
+  exchangeRates: ExchangeRatesResponse
+): SubscriptionPackage[] {
+  return exchangeRates.appStorePrices?.packages?.length
+    ? exchangeRates.appStorePrices.packages
+    : [...fallbackPackages];
+}
+
+export function getDefaultPackageIds(
+  availablePackages: readonly Pick<SubscriptionPackage, 'id'>[]
+): PackageId[] {
+  return availablePackages.map((pkg) => pkg.id);
+}
+
+export const defaultPackageIds = getDefaultPackageIds(packages);
 
 export function isDefaultPackageSelection(
-  packageIds: readonly PackageId[]
+  packageIds: readonly PackageId[],
+  availablePackages: readonly Pick<SubscriptionPackage, 'id'>[] = packages
 ): boolean {
+  const defaults = getDefaultPackageIds(availablePackages);
   return (
-    packageIds.length === defaultPackageIds.length &&
-    defaultPackageIds.every((id) => packageIds.includes(id))
+    packageIds.length === defaults.length &&
+    defaults.every((id) => packageIds.includes(id))
   );
 }
 
-export function formatPrice(price: number, currency: string = 'CNY'): string {
+export function formatPrice(price: number, currency: CurrencyCode = 'CNY'): string {
   if (currency === 'CNY') {
     return `¥${price.toFixed(2)}`;
   }
 
-  const currencyInfo = currencies.find((item) => item.code === currency);
-  return `${currencyInfo?.symbol ?? ''}${price.toFixed(2)}`;
+  const symbol = currencySymbols[currency] ?? `${currency} `;
+  return `${symbol}${price.toFixed(2)}`;
 }
 
 export function getPackageLocalPrice(
   pkg: SubscriptionPackage,
-  currencyCode: CurrencyCode
-): number | null {
-  return pkg.prices[currencyCode] ?? null;
+  regionCode: RegionCode
+): AppStorePricePackage['prices'][string] | null {
+  return pkg.prices[regionCode] ?? null;
 }

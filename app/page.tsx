@@ -4,6 +4,6 @@ import type { ExchangeRatesResponse } from '@/lib/exchange-rate-types';
 
 export default function Home() {
   return (
-    <ConverterClient exchangeRates={exchangeRates as ExchangeRatesResponse} />
+    <ConverterClient exchangeRates={exchangeRates as unknown as ExchangeRatesResponse} />
   );
 }

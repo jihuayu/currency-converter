@@ -1,7 +1,7 @@
 {
   "baseCurrency": "CNY",
   "sampleAmount": 1000,
-  "fetchedAt": "2026-05-18T03:24:02.659Z",
+  "fetchedAt": "2026-05-18T09:57:17.362Z",
   "currencies": {
     "USD": {
       "visa": {
@@ -25,26 +25,48 @@
         "requestUrl": "https://www.mastercard.com/marketingservices/public/mccom-services/currency-conversions/conversion-rates?exchange_date=0000-00-00&transaction_currency=USD&cardholder_billing_currency=CNY&bank_fee=0&transaction_amount=1000"
       }
     },
-    "TRY": {
+    "BRL": {
       "visa": {
         "provider": "visa",
         "status": "success",
-        "currency": "TRY",
-        "rate": 0.1498185304,
+        "currency": "BRL",
+        "rate": 1.3601269356,
         "sampleAmount": 1000,
-        "convertedAmount": 149.81853,
+        "convertedAmount": 1360.126936,
         "sourceUpdatedAt": "2026-05-15T23:50:26.000Z",
-        "requestUrl": "https://www.visa.com.hk/cmsapi/fx/rates?amount=1000&fee=0&utcConvertedDate=05%2F18%2F2026&exchangedate=05%2F18%2F2026&fromCurr=CNY&toCurr=TRY"
+        "requestUrl": "https://www.visa.com.hk/cmsapi/fx/rates?amount=1000&fee=0&utcConvertedDate=05%2F18%2F2026&exchangedate=05%2F18%2F2026&fromCurr=CNY&toCurr=BRL"
       },
       "mastercard": {
         "provider": "mastercard",
         "status": "success",
-        "currency": "TRY",
-        "rate": 0.1505104,
+        "currency": "BRL",
+        "rate": 1.3687711,
         "sampleAmount": 1000,
-        "convertedAmount": 150.5104,
+        "convertedAmount": 1368.7711,
         "sourceUpdatedAt": "2026-05-17T00:00:00.000Z",
-        "requestUrl": "https://www.mastercard.com/marketingservices/public/mccom-services/currency-conversions/conversion-rates?exchange_date=0000-00-00&transaction_currency=TRY&cardholder_billing_currency=CNY&bank_fee=0&transaction_amount=1000"
+        "requestUrl": "https://www.mastercard.com/marketingservices/public/mccom-services/currency-conversions/conversion-rates?exchange_date=0000-00-00&transaction_currency=BRL&cardholder_billing_currency=CNY&bank_fee=0&transaction_amount=1000"
+      }
+    },
+    "EGP": {
+      "visa": {
+        "provider": "visa",
+        "status": "success",
+        "currency": "EGP",
+        "rate": 0.128787761,
+        "sampleAmount": 1000,
+        "convertedAmount": 128.787761,
+        "sourceUpdatedAt": "2026-05-15T23:50:26.000Z",
+        "requestUrl": "https://www.visa.com.hk/cmsapi/fx/rates?amount=1000&fee=0&utcConvertedDate=05%2F18%2F2026&exchangedate=05%2F18%2F2026&fromCurr=CNY&toCurr=EGP"
+      },
+      "mastercard": {
+        "provider": "mastercard",
+        "status": "success",
+        "currency": "EGP",
+        "rate": 0.128895,
+        "sampleAmount": 1000,
+        "convertedAmount": 128.895,
+        "sourceUpdatedAt": "2026-05-17T00:00:00.000Z",
+        "requestUrl": "https://www.mastercard.com/marketingservices/public/mccom-services/currency-conversions/conversion-rates?exchange_date=0000-00-00&transaction_currency=EGP&cardholder_billing_currency=CNY&bank_fee=0&transaction_amount=1000"
       }
     },
     "NGN": {
@@ -68,11 +90,396 @@
         "sourceUpdatedAt": "2026-05-17T00:00:00.000Z",
         "requestUrl": "https://www.mastercard.com/marketingservices/public/mccom-services/currency-conversions/conversion-rates?exchange_date=0000-00-00&transaction_currency=NGN&cardholder_billing_currency=CNY&bank_fee=0&transaction_amount=1000"
       }
+    },
+    "PHP": {
+      "visa": {
+        "provider": "visa",
+        "status": "success",
+        "currency": "PHP",
+        "rate": 0.1103633094,
+        "sampleAmount": 1000,
+        "convertedAmount": 110.363309,
+        "sourceUpdatedAt": "2026-05-15T23:50:26.000Z",
+        "requestUrl": "https://www.visa.com.hk/cmsapi/fx/rates?amount=1000&fee=0&utcConvertedDate=05%2F18%2F2026&exchangedate=05%2F18%2F2026&fromCurr=CNY&toCurr=PHP"
+      },
+      "mastercard": {
+        "provider": "mastercard",
+        "status": "success",
+        "currency": "PHP",
+        "rate": 0.1107316,
+        "sampleAmount": 1000,
+        "convertedAmount": 110.7316,
+        "sourceUpdatedAt": "2026-05-17T00:00:00.000Z",
+        "requestUrl": "https://www.mastercard.com/marketingservices/public/mccom-services/currency-conversions/conversion-rates?exchange_date=0000-00-00&transaction_currency=PHP&cardholder_billing_currency=CNY&bank_fee=0&transaction_amount=1000"
+      }
+    },
+    "PKR": {
+      "visa": {
+        "provider": "visa",
+        "status": "success",
+        "currency": "PKR",
+        "rate": 0.0244466275,
+        "sampleAmount": 1000,
+        "convertedAmount": 24.446628,
+        "sourceUpdatedAt": "2026-05-15T23:50:26.000Z",
+        "requestUrl": "https://www.visa.com.hk/cmsapi/fx/rates?amount=1000&fee=0&utcConvertedDate=05%2F18%2F2026&exchangedate=05%2F18%2F2026&fromCurr=CNY&toCurr=PKR"
+      },
+      "mastercard": {
+        "provider": "mastercard",
+        "status": "success",
+        "currency": "PKR",
+        "rate": 0.0244928,
+        "sampleAmount": 1000,
+        "convertedAmount": 24.4928,
+        "sourceUpdatedAt": "2026-05-17T00:00:00.000Z",
+        "requestUrl": "https://www.mastercard.com/marketingservices/public/mccom-services/currency-conversions/conversion-rates?exchange_date=0000-00-00&transaction_currency=PKR&cardholder_billing_currency=CNY&bank_fee=0&transaction_amount=1000"
+      }
+    },
+    "TRY": {
+      "visa": {
+        "provider": "visa",
+        "status": "success",
+        "currency": "TRY",
+        "rate": 0.1498185304,
+        "sampleAmount": 1000,
+        "convertedAmount": 149.81853,
+        "sourceUpdatedAt": "2026-05-15T23:50:26.000Z",
+        "requestUrl": "https://www.visa.com.hk/cmsapi/fx/rates?amount=1000&fee=0&utcConvertedDate=05%2F18%2F2026&exchangedate=05%2F18%2F2026&fromCurr=CNY&toCurr=TRY"
+      },
+      "mastercard": {
+        "provider": "mastercard",
+        "status": "success",
+        "currency": "TRY",
+        "rate": 0.1505104,
+        "sampleAmount": 1000,
+        "convertedAmount": 150.5104,
+        "sourceUpdatedAt": "2026-05-17T00:00:00.000Z",
+        "requestUrl": "https://www.mastercard.com/marketingservices/public/mccom-services/currency-conversions/conversion-rates?exchange_date=0000-00-00&transaction_currency=TRY&cardholder_billing_currency=CNY&bank_fee=0&transaction_amount=1000"
+      }
     }
   },
+  "appStorePrices": {
+    "appId": "6448311069,6473753684,333903271",
+    "appName": "ChatGPT, Claude, X",
+    "sourceUrl": "https://appstoreprice.org/zh/apps/6448311069, https://appstoreprice.org/zh/apps/6473753684, https://appstoreprice.org/zh/apps/333903271",
+    "fetchedAt": "2026-05-18T09:57:12.421Z",
+    "regions": [
+      {
+        "code": "US",
+        "name": "美国",
+        "currency": "USD",
+        "symbol": "$",
+        "flag": "🇺🇸"
+      },
+      {
+        "code": "AR",
+        "name": "阿根廷",
+        "currency": "USD",
+        "symbol": "$",
+        "flag": "🇦🇷"
+      },
+      {
+        "code": "EG",
+        "name": "埃及",
+        "currency": "EGP",
+        "symbol": "E£",
+        "flag": "🇪🇬"
+      },
+      {
+        "code": "PK",
+        "name": "巴基斯坦",
+        "currency": "PKR",
+        "symbol": "₨",
+        "flag": "🇵🇰"
+      },
+      {
+        "code": "BR",
+        "name": "巴西",
+        "currency": "BRL",
+        "symbol": "R$",
+        "flag": "🇧🇷"
+      },
+      {
+        "code": "PH",
+        "name": "菲律宾",
+        "currency": "PHP",
+        "symbol": "₱",
+        "flag": "🇵🇭"
+      },
+      {
+        "code": "NG",
+        "name": "尼日利亚",
+        "currency": "NGN",
+        "symbol": "₦",
+        "flag": "🇳🇬"
+      },
+      {
+        "code": "TR",
+        "name": "土耳其",
+        "currency": "TRY",
+        "symbol": "₺",
+        "flag": "🇹🇷"
+      }
+    ],
+    "packages": [
+      {
+        "id": "chatgpt-oai-chatgpt-plus-1999-1m",
+        "name": "ChatGPT Plus（月付）",
+        "prices": {
+          "US": {
+            "amount": 19.99,
+            "currency": "USD",
+            "region": "US",
+            "regionName": "美国",
+            "amountCny": 136.66
+          },
+          "TR": {
+            "amount": 499.99,
+            "currency": "TRY",
+            "region": "TR",
+            "regionName": "土耳其",
+            "amountCny": 76.11
+          },
+          "PH": {
+            "amount": 999,
+            "currency": "PHP",
+            "region": "PH",
+            "regionName": "菲律宾",
+            "amountCny": 113.71
+          }
+        },
+        "description": "ChatGPT App Store 内购 SKU",
+        "pricingNote": "App Store Price 构建时抓取：美区 + 按人民币换算最便宜的 2 个地区",
+        "sourceSkuName": "ChatGPT Plus",
+        "duration": "monthly"
+      },
+      {
+        "id": "chatgpt-oai-chatgpt-pro-20000-1m",
+        "name": "ChatGPT Pro 20x（月付）",
+        "prices": {
+          "US": {
+            "amount": 200,
+            "currency": "USD",
+            "region": "US",
+            "regionName": "美国",
+            "amountCny": 1367.28
+          },
+          "PH": {
+            "amount": 9990,
+            "currency": "PHP",
+            "region": "PH",
+            "regionName": "菲律宾",
+            "amountCny": 1137.08
+          },
+          "TR": {
+            "amount": 7999.99,
+            "currency": "TRY",
+            "region": "TR",
+            "regionName": "土耳其",
+            "amountCny": 1217.81
+          }
+        },
+        "description": "ChatGPT App Store 内购 SKU",
+        "pricingNote": "App Store Price 构建时抓取：美区 + 按人民币换算最便宜的 2 个地区",
+        "sourceSkuName": "ChatGPT Pro 20x",
+        "duration": "monthly"
+      },
+      {
+        "id": "claude-com-anthropic-claude-max-20250402-20x-monthly-ios",
+        "name": "Claude Max 20x（月付）",
+        "prices": {
+          "US": {
+            "amount": 249.99,
+            "currency": "USD",
+            "region": "US",
+            "regionName": "美国",
+            "amountCny": 1709.03
+          },
+          "NG": {
+            "amount": 200000,
+            "currency": "NGN",
+            "region": "NG",
+            "regionName": "尼日利亚",
+            "amountCny": 1014.03
+          },
+          "EG": {
+            "amount": 9000,
+            "currency": "EGP",
+            "region": "EG",
+            "regionName": "埃及",
+            "amountCny": 1188.49
+          }
+        },
+        "description": "Claude App Store 内购 SKU",
+        "pricingNote": "App Store Price 构建时抓取：美区 + 按人民币换算最便宜的 2 个地区",
+        "sourceSkuName": "Claude Max 20x - Monthly",
+        "duration": "monthly"
+      },
+      {
+        "id": "chatgpt-oai-chatgpt-pro-10000-1m",
+        "name": "ChatGPT Pro 5x（月付）",
+        "prices": {
+          "US": {
+            "amount": 100,
+            "currency": "USD",
+            "region": "US",
+            "regionName": "美国",
+            "amountCny": 683.64
+          },
+          "AR": {
+            "amount": 100,
+            "currency": "USD",
+            "region": "AR",
+            "regionName": "阿根廷",
+            "amountCny": 683.64
+          },
+          "PK": {
+            "amount": 27999,
+            "currency": "PKR",
+            "region": "PK",
+            "regionName": "巴基斯坦",
+            "amountCny": 686.24
+          }
+        },
+        "description": "ChatGPT App Store 内购 SKU",
+        "pricingNote": "App Store Price 构建时抓取：美区 + 按人民币换算最便宜的 2 个地区",
+        "sourceSkuName": "ChatGPT Pro 5x",
+        "duration": "monthly"
+      },
+      {
+        "id": "claude-com-anthropic-claude-pro-monthly-ios",
+        "name": "Claude Pro（月付）",
+        "prices": {
+          "US": {
+            "amount": 20,
+            "currency": "USD",
+            "region": "US",
+            "regionName": "美国",
+            "amountCny": 136.73
+          },
+          "NG": {
+            "amount": 14900,
+            "currency": "NGN",
+            "region": "NG",
+            "regionName": "尼日利亚",
+            "amountCny": 75.55
+          },
+          "EG": {
+            "amount": 699.99,
+            "currency": "EGP",
+            "region": "EG",
+            "regionName": "埃及",
+            "amountCny": 92.44
+          }
+        },
+        "description": "Claude App Store 内购 SKU",
+        "pricingNote": "App Store Price 构建时抓取：美区 + 按人民币换算最便宜的 2 个地区",
+        "sourceSkuName": "Claude Pro - Monthly",
+        "duration": "monthly"
+      },
+      {
+        "id": "claude-com-anthropic-claude-max-20250402-5x-monthly-ios",
+        "name": "Claude Max 5x（月付）",
+        "prices": {
+          "US": {
+            "amount": 124.99,
+            "currency": "USD",
+            "region": "US",
+            "regionName": "美国",
+            "amountCny": 854.48
+          },
+          "NG": {
+            "amount": 100000,
+            "currency": "NGN",
+            "region": "NG",
+            "regionName": "尼日利亚",
+            "amountCny": 507.02
+          },
+          "EG": {
+            "amount": 4399,
+            "currency": "EGP",
+            "region": "EG",
+            "regionName": "埃及",
+            "amountCny": 580.91
+          }
+        },
+        "description": "Claude App Store 内购 SKU",
+        "pricingNote": "App Store Price 构建时抓取：美区 + 按人民币换算最便宜的 2 个地区",
+        "sourceSkuName": "Claude Max 5x - Monthly",
+        "duration": "monthly"
+      },
+      {
+        "id": "x-com-twitter-apple-rogue-one-2-1",
+        "name": "X Premium（月付）",
+        "prices": {
+          "US": {
+            "amount": 11,
+            "currency": "USD",
+            "region": "US",
+            "regionName": "美国",
+            "amountCny": 75.09
+          },
+          "TR": {
+            "amount": 199.99,
+            "currency": "TRY",
+            "region": "TR",
+            "regionName": "土耳其",
+            "amountCny": 29.96
+          },
+          "EG": {
+            "amount": 250,
+            "currency": "EGP",
+            "region": "EG",
+            "regionName": "埃及",
+            "amountCny": 32.26
+          }
+        },
+        "description": "X App Store 内购 SKU",
+        "pricingNote": "App Store Price 构建时抓取：美区 + 按人民币换算最便宜的 2 个地区",
+        "sourceSkuName": "X Premium (Monthly)",
+        "duration": "monthly"
+      },
+      {
+        "id": "x-com-twitter-apple-premium-plus",
+        "name": "X Premium Plus（月付）",
+        "prices": {
+          "US": {
+            "amount": 50,
+            "currency": "USD",
+            "region": "US",
+            "regionName": "美国",
+            "amountCny": 341.31
+          },
+          "BR": {
+            "amount": 199,
+            "currency": "BRL",
+            "region": "BR",
+            "regionName": "巴西",
+            "amountCny": 271.02
+          },
+          "PK": {
+            "amount": 12900,
+            "currency": "PKR",
+            "region": "PK",
+            "regionName": "巴基斯坦",
+            "amountCny": 315.66
+          }
+        },
+        "description": "X App Store 内购 SKU",
+        "pricingNote": "App Store Price 构建时抓取：美区 + 按人民币换算最便宜的 2 个地区",
+        "sourceSkuName": "X Premium Plus (Monthly)",
+        "duration": "monthly"
+      }
+    ],
+    "notes": [
+      "价格数据来自 appstoreprice.org 的公开页面。",
+      "每个 SKU 只保留美区以及按 appstoreprice.org 人民币换算价排序最便宜的 2 个地区。"
+    ]
+  },
   "notes": [
-    "该文件在构建阶段生成，属于静态汇率快照。",
+    "该文件在构建阶段生成，属于静态汇率与 App Store Price 价格快照。",
     "Visa 使用 Chromium + 桌面 UA，在官方汇率页面同站上下文内抓取。",
-    "Mastercard 使用官方公开汇率接口抓取。"
+    "Mastercard 使用官方公开汇率接口抓取。",
+    "SKU 价格来自 appstoreprice.org；每个 SKU 保留美区 + 最便宜的 2 个地区。"
   ]
 }

@@ -3,17 +3,16 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Layers3, X } from 'lucide-react';
 import { MobileSubscriptionSwitcher } from '@/components/mobile-subscription-switcher';
-import {
-  packages,
-  type PackageId,
-} from '@/lib/data';
+import type { PackageId, SubscriptionPackage } from '@/lib/data';
 
 interface MobileControlsDrawerProps {
+  availablePackages: readonly SubscriptionPackage[];
   selectedPackages: PackageId[];
   onPackageChange: (packages: PackageId[]) => void;
 }
 
 export function MobileControlsDrawer({
+  availablePackages,
   selectedPackages,
   onPackageChange,
 }: MobileControlsDrawerProps) {
@@ -21,15 +20,15 @@ export function MobileControlsDrawer({
 
   const packageLabel = useMemo(() => {
     if (selectedPackages.length === 1) {
-      return packages.find((pkg) => pkg.id === selectedPackages[0])?.name ?? '选择订阅';
+      return availablePackages.find((pkg) => pkg.id === selectedPackages[0])?.name ?? '选择订阅';
     }
 
-    if (selectedPackages.length === packages.length) {
+    if (selectedPackages.length === availablePackages.length) {
       return '全部订阅';
     }
 
     return `${selectedPackages.length} 个订阅`;
-  }, [selectedPackages]);
+  }, [availablePackages, selectedPackages]);
 
   useEffect(() => {
     if (!isOpen) {
@@ -116,6 +115,7 @@ export function MobileControlsDrawer({
 
             <div className="max-h-[calc(88vh-8.5rem)] space-y-6 overflow-y-auto px-5 py-5">
               <MobileSubscriptionSwitcher
+                availablePackages={availablePackages}
                 variant="inline"
                 selectedPackages={selectedPackages}
                 onPackageChange={onPackageChange}
