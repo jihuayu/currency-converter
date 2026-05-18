@@ -130,7 +130,7 @@ export function FilterBar({
               >
                 {channel.name}
                 <span className="ml-1.5 text-xs opacity-70">
-                  ({channel.fee})
+                  （接口）
                 </span>
               </button>
             ))}

@@ -1,98 +1,101 @@
-// 汇率数据 - 实际使用时可以替换为实时 API
-export const exchangeRates = {
-  USD: 7.24, // 美元兑人民币
-  TRY: 0.21, // 土耳其里拉兑人民币
-  NGN: 0.0045, // 尼日利亚奈拉兑人民币
-};
-
-// 支付渠道手续费
-export const channelFees = {
-  visa: 0.015, // 1.5% 手续费
-  mastercard: 0.018, // 1.8% 手续费
-};
-
-// 货币信息
 export const currencies = [
-  { code: "USD", name: "美元", symbol: "$", flag: "🇺🇸" },
-  { code: "TRY", name: "土耳其里拉", symbol: "₺", flag: "🇹🇷" },
-  { code: "NGN", name: "尼日利亚奈拉", symbol: "₦", flag: "🇳🇬" },
+  { code: 'USD', name: '美元', symbol: '$', flag: '🇺🇸' },
+  { code: 'TRY', name: '土耳其里拉', symbol: '₺', flag: '🇹🇷' },
+  { code: 'NGN', name: '尼日利亚奈拉', symbol: '₦', flag: '🇳🇬' },
 ] as const;
 
-// 支付渠道
+export type CurrencyCode = (typeof currencies)[number]['code'];
+
 export const channels = [
-  { id: "visa", name: "Visa", fee: "1.5%" },
-  { id: "mastercard", name: "Mastercard", fee: "1.8%" },
+  { id: 'visa', name: 'Visa', description: 'Visa 官方汇率接口' },
+  { id: 'mastercard', name: 'Mastercard', description: 'Mastercard 官方汇率接口' },
 ] as const;
 
-// 预设套餐
-export const packages = [
-  { id: "custom-100", name: "100 单位", amount: 100, description: "自定义金额" },
-  {
-    id: "chatgpt-plus",
-    name: "ChatGPT Plus",
-    amount: 20,
-    currency: "USD",
-    description: "OpenAI ChatGPT Plus 订阅",
-  },
-  {
-    id: "chatgpt-pro",
-    name: "ChatGPT Pro",
-    amount: 200,
-    currency: "USD",
-    description: "OpenAI ChatGPT Pro 订阅",
-  },
-  {
-    id: "claude-pro",
-    name: "Claude Pro",
-    amount: 20,
-    currency: "USD",
-    description: "Anthropic Claude Pro 订阅",
-  },
-  {
-    id: "claude-max",
-    name: "Claude Max",
-    amount: 100,
-    currency: "USD",
-    description: "Anthropic Claude Max 订阅",
-  },
-  {
-    id: "cursor-pro",
-    name: "Cursor Pro",
-    amount: 20,
-    currency: "USD",
-    description: "Cursor Pro 订阅",
-  },
-  {
-    id: "github-copilot",
-    name: "GitHub Copilot",
-    amount: 10,
-    currency: "USD",
-    description: "GitHub Copilot 订阅",
-  },
-] as const;
+export type ChannelId = (typeof channels)[number]['id'];
 
-export type CurrencyCode = (typeof currencies)[number]["code"];
-export type ChannelId = (typeof channels)[number]["id"];
-export type PackageId = (typeof packages)[number]["id"];
+export type PackagePrices = Partial<Record<CurrencyCode, number>>;
 
-// 计算人民币价格
-export function calculateCNYPrice(
-  amount: number,
-  currencyCode: CurrencyCode,
-  channelId: ChannelId
-): number {
-  const rate = exchangeRates[currencyCode];
-  const fee = channelFees[channelId];
-  const basePrice = amount * rate;
-  const totalPrice = basePrice * (1 + fee);
-  return Math.round(totalPrice * 100) / 100;
+export interface SubscriptionPackage {
+  id: string;
+  name: string;
+  prices: PackagePrices;
+  description: string;
+  pricingNote: string;
 }
 
-// 格式化价格
-export function formatPrice(price: number, currency: string = "CNY"): string {
-  if (currency === "CNY") {
+export const packages = [
+  {
+    id: 'custom-100',
+    name: '100 单位',
+    prices: { USD: 100, TRY: 100, NGN: 100 },
+    description: '按所选币种的 100 单位计算',
+    pricingNote: '自定义测试金额',
+  },
+  {
+    id: 'chatgpt-plus',
+    name: 'ChatGPT Plus',
+    prices: { USD: 19.99, TRY: 499.99, NGN: 31500 },
+    description: 'OpenAI ChatGPT Plus 订阅',
+    pricingNote: '土区/尼区使用当地 Apple App Store 标价',
+  },
+  {
+    id: 'chatgpt-pro',
+    name: 'ChatGPT Pro 20x',
+    prices: { USD: 200, TRY: 7999.99, NGN: 299900 },
+    description: 'OpenAI ChatGPT Pro 20x 订阅',
+    pricingNote: '土区/尼区使用当地 Apple App Store 标价',
+  },
+  {
+    id: 'chatgpt-pro-5x',
+    name: 'ChatGPT Pro 5x',
+    prices: { USD: 100, TRY: 5299.99, NGN: 144900 },
+    description: 'OpenAI ChatGPT Pro 5x 订阅',
+    pricingNote: '土区/尼区使用当地 Apple App Store 标价',
+  },
+  {
+    id: 'claude-pro',
+    name: 'Claude Pro',
+    prices: { USD: 20, TRY: 799.99, NGN: 14900 },
+    description: 'Anthropic Claude Pro 订阅',
+    pricingNote: '土区/尼区使用当地 Apple App Store 标价',
+  },
+  {
+    id: 'claude-max',
+    name: 'Claude Max 5x',
+    prices: { USD: 124.99, TRY: 4999.99, NGN: 100000 },
+    description: 'Anthropic Claude Max 5x 订阅',
+    pricingNote: '土区/尼区使用当地 Apple App Store 标价',
+  },
+  {
+    id: 'claude-max-20x',
+    name: 'Claude Max 20x',
+    prices: { USD: 249.99, TRY: 9999.99, NGN: 200000 },
+    description: 'Anthropic Claude Max 20x 订阅',
+    pricingNote: '土区/尼区使用当地 Apple App Store 标价',
+  },
+  {
+    id: 'cursor-pro',
+    name: 'Cursor Pro',
+    prices: { USD: 20 },
+    description: 'Cursor Pro 订阅',
+    pricingNote: '暂未配置土区/尼区 Apple App Store 标价',
+  },
+] as const satisfies readonly SubscriptionPackage[];
+
+export type PackageId = (typeof packages)[number]['id'];
+
+export function formatPrice(price: number, currency: string = 'CNY'): string {
+  if (currency === 'CNY') {
     return `¥${price.toFixed(2)}`;
   }
-  const currencyInfo = currencies.find((c) => c.code === currency);
-  return `${currencyInfo?.symbol || ""}${price.toFixed(2)}`;
+
+  const currencyInfo = currencies.find((item) => item.code === currency);
+  return `${currencyInfo?.symbol ?? ''}${price.toFixed(2)}`;
+}
+
+export function getPackageLocalPrice(
+  pkg: SubscriptionPackage,
+  currencyCode: CurrencyCode
+): number | null {
+  return pkg.prices[currencyCode] ?? null;
 }

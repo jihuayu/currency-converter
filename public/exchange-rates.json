@@ -1,0 +1,78 @@
+{
+  "baseCurrency": "CNY",
+  "sampleAmount": 1000,
+  "fetchedAt": "2026-05-18T02:27:35.530Z",
+  "currencies": {
+    "USD": {
+      "visa": {
+        "provider": "visa",
+        "status": "success",
+        "currency": "USD",
+        "rate": 6.804449838,
+        "sampleAmount": 1000,
+        "convertedAmount": 6804.449838,
+        "sourceUpdatedAt": "2026-05-15T23:50:26.000Z",
+        "requestUrl": "https://www.visa.com.hk/cmsapi/fx/rates?amount=1000&fee=0&utcConvertedDate=05%2F18%2F2026&exchangedate=05%2F18%2F2026&fromCurr=CNY&toCurr=USD"
+      },
+      "mastercard": {
+        "provider": "mastercard",
+        "status": "success",
+        "currency": "USD",
+        "rate": 6.8121,
+        "sampleAmount": 1000,
+        "convertedAmount": 6812.1,
+        "sourceUpdatedAt": "2026-05-17T00:00:00.000Z",
+        "requestUrl": "https://www.mastercard.com/marketingservices/public/mccom-services/currency-conversions/conversion-rates?exchange_date=0000-00-00&transaction_currency=USD&cardholder_billing_currency=CNY&bank_fee=0&transaction_amount=1000"
+      }
+    },
+    "TRY": {
+      "visa": {
+        "provider": "visa",
+        "status": "success",
+        "currency": "TRY",
+        "rate": 0.1498185304,
+        "sampleAmount": 1000,
+        "convertedAmount": 149.81853,
+        "sourceUpdatedAt": "2026-05-15T23:50:26.000Z",
+        "requestUrl": "https://www.visa.com.hk/cmsapi/fx/rates?amount=1000&fee=0&utcConvertedDate=05%2F18%2F2026&exchangedate=05%2F18%2F2026&fromCurr=CNY&toCurr=TRY"
+      },
+      "mastercard": {
+        "provider": "mastercard",
+        "status": "success",
+        "currency": "TRY",
+        "rate": 0.1505104,
+        "sampleAmount": 1000,
+        "convertedAmount": 150.5104,
+        "sourceUpdatedAt": "2026-05-17T00:00:00.000Z",
+        "requestUrl": "https://www.mastercard.com/marketingservices/public/mccom-services/currency-conversions/conversion-rates?exchange_date=0000-00-00&transaction_currency=TRY&cardholder_billing_currency=CNY&bank_fee=0&transaction_amount=1000"
+      }
+    },
+    "NGN": {
+      "visa": {
+        "provider": "visa",
+        "status": "success",
+        "currency": "NGN",
+        "rate": 0.0049573436,
+        "sampleAmount": 1000,
+        "convertedAmount": 4.957344,
+        "sourceUpdatedAt": "2026-05-15T23:50:26.000Z",
+        "requestUrl": "https://www.visa.com.hk/cmsapi/fx/rates?amount=1000&fee=0&utcConvertedDate=05%2F18%2F2026&exchangedate=05%2F18%2F2026&fromCurr=CNY&toCurr=NGN"
+      },
+      "mastercard": {
+        "provider": "mastercard",
+        "status": "success",
+        "currency": "NGN",
+        "rate": 0.0049653,
+        "sampleAmount": 1000,
+        "convertedAmount": 4.9653,
+        "sourceUpdatedAt": "2026-05-17T00:00:00.000Z",
+        "requestUrl": "https://www.mastercard.com/marketingservices/public/mccom-services/currency-conversions/conversion-rates?exchange_date=0000-00-00&transaction_currency=NGN&cardholder_billing_currency=CNY&bank_fee=0&transaction_amount=1000"
+      }
+    }
+  },
+  "notes": [
+    "该文件在构建阶段生成，属于静态汇率快照。",
+    "Visa 使用 Chromium + 桌面 UA，在官方汇率页面同站上下文内抓取。",
+    "Mastercard 使用官方公开汇率接口抓取。"
+  ]
+}
