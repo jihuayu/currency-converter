@@ -7,7 +7,7 @@ const inter = Inter({
   variable: "--font-inter",
 });
 
-const title = "汇率转换器 | 多货币订阅价格计算";
+const title = "怎么订阅更便宜";
 const description =
   "计算 ChatGPT、Claude 等 AI 订阅服务在不同货币和支付渠道下的人民币价格";
 const ogImage = "/og.png";
