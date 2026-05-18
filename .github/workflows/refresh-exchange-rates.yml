@@ -53,22 +53,3 @@ jobs:
           publish_dir: ./out
           force_orphan: true
 
-      - name: Commit updated exchange-rates.json
-        id: commit
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add public/exchange-rates.json
-          if git diff --staged --quiet; then
-            echo "changed=false" >> "$GITHUB_OUTPUT"
-            echo "No exchange rate changes to commit"
-            exit 0
-          fi
-          git commit -m "chore: refresh exchange rates [skip ci]"
-          echo "changed=true" >> "$GITHUB_OUTPUT"
-
-      - name: Push changes
-        if: steps.commit.outputs.changed == 'true'
-        run: |
-          git pull --rebase origin "${GITHUB_REF_NAME}"
-          git push origin "HEAD:${GITHUB_REF_NAME}"
