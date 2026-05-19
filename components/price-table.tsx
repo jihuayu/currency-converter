@@ -144,17 +144,23 @@ export function PriceTable({
           return (
             <div
               key={pkg.id}
-              className="overflow-hidden rounded-2xl border border-border/90 bg-card/95 shadow-lg shadow-brand-navy/5"
+              id={pkg.id}
+              className="scroll-mt-24 overflow-hidden rounded-2xl border border-border/90 bg-card/95 shadow-lg shadow-brand-navy/5 md:scroll-mt-28"
             >
               <div className="border-b border-border/80 bg-gradient-to-r from-brand-blue/10 via-secondary/60 to-primary/10 px-6 py-4">
                 <div className="flex items-center justify-between gap-4">
                   <div>
                     <h3 className="text-lg font-bold text-brand-navy">
-                      {pkg.name}
+                      <a
+                        href={`#${pkg.id}`}
+                        className="inline-flex items-center gap-2 transition-colors hover:text-brand-blue"
+                      >
+                        <span>{pkg.name}</span>
+                        <span className="text-sm text-muted-foreground" aria-hidden="true">
+                          #
+                        </span>
+                      </a>
                     </h3>
-                    <p className="text-sm text-muted-foreground">
-                      {pkg.description}
-                    </p>ß
                   </div>
                   {usPrice !== null && (
                     <div className="text-right">
