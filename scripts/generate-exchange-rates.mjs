@@ -560,6 +560,22 @@ async function fetchVisaRates(currencyCodes) {
   }
 }
 
+function assertNoRateFetchFailures(providerResultsByName) {
+  const failures = [];
+
+  for (const [provider, results] of Object.entries(providerResultsByName)) {
+    for (const [currency, result] of Object.entries(results)) {
+      if (result?.status === 'error') {
+        failures.push(`${provider.toUpperCase()} ${currency}: ${result.message}`);
+      }
+    }
+  }
+
+  if (failures.length > 0) {
+    throw new Error('汇率拉取失败，已终止构建：\n' + failures.join('\n'));
+  }
+}
+
 function getCurrencyCodes(appStorePrices) {
   return Array.from(
     new Set(
@@ -594,6 +610,8 @@ async function main() {
     fetchVisaRates(currencyCodes),
     fetchMastercardRates(currencyCodes),
   ]);
+
+  assertNoRateFetchFailures({ visa, mastercard });
 
   const payload = {
     baseCurrency: 'CNY',
