@@ -154,10 +154,7 @@ export function PriceTable({
                     </h3>
                     <p className="text-sm text-muted-foreground">
                       {pkg.description}
-                    </p>
-                    <p className="text-xs text-muted-foreground mt-1">
-                      {pkg.pricingNote}
-                    </p>
+                    </p>ß
                   </div>
                   {usPrice !== null && (
                     <div className="text-right">
